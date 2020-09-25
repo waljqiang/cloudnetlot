@@ -268,6 +268,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/styles/index.scss';
+@import '@/projects/home/styles/index.scss';
 .login_conrainer { width: 850px; min-height: 400px; height: auto; margin: 1% auto 0 auto; padding: 20px; border-radius: 5px; background: $white_bg;}
 </style>

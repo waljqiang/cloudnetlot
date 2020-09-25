@@ -159,15 +159,9 @@ class DeviceService extends BaseService{
 			$device->group_id = $hashids->encodeHash($device->group_id);
 			$device->join_time = convUnixToZoneGm($device->join_time,$user->timeZone,$user->isSummerTime);
 			$device->created_at = convUnixToZoneGm($device->created_at,$user->timeZone,$user->isSummerTime);
-			if($currentDevice["status"] == config("device.status.online")){
-				$device->cpu_use = $currentDevice["cpu_use"];
-				$device->memory_use = $currentDevice["memory_use"];
-				$device->runtime = $currentDevice["runtime"];
-			}else{
-				$device->cpu_use = "0";
-				$device->memory_use = "0";
-				$device->runtime = "0";
-			}
+			$device->cpu_use = $currentDevice["cpu_use"];
+			$device->memory_use = $currentDevice["memory_use"];
+			$device->runtime = $currentDevice["runtime"];
 			return $device;
 		});
 
@@ -233,7 +227,11 @@ class DeviceService extends BaseService{
 		],["params" => function($query) use ($type){
 			$query->whereIn("type",$type);
 		}],['*'],true);
-
+		$deviceDynamic = $this->cacheRepository->getDeviceDynamic($device->dev_mac);
+		$device->cpu_use = $deviceDynamic["cpu_use"];
+		$device->memory_use = $deviceDynamic["memory_use"];
+		$device->runtime = $deviceDynamic["runtime"];
+		$device->status = $deviceDynamic["status"];
 		$res = $device->params->mapWithKeys(function($infos) use ($device){
 			return $this->deviceParamsService->parseParams($device,$infos);
 		});

@@ -58,7 +58,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       inject: true,
       favicon: resolve('favicon.ico'),
       title: 'Project',
-      staticPath:projectConfig.rootPath+"dist/env.js",
+      staticPath:projectConfig.rootPath+"env.js",
       minify: {
         removeComments: true,
         collapseWhitespace: true,

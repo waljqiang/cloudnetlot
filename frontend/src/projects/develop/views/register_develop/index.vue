@@ -68,7 +68,7 @@ export default {
         }
         return {
             fullscreenLoading:false,
-            loading_txt:"正在登陆，请稍后……",
+            loading_txt:"请稍后……",
             loading_bgcolor:"rgba(0, 0, 0, 0.7)",
             
             registerForm:{

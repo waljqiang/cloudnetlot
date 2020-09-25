@@ -17,29 +17,46 @@ class DeviceParamsService extends BaseService{
 		$parameters = json_decode($paramsInfo->params,true);
 		$deviceType = config("device.typeinfo");
 		$deviceTypeFlip = array_flip($deviceType);
-		switch($paramsInfo->type){
-			case $deviceType["system"]://系统信息
-				$res[$deviceTypeFlip[$paramsInfo->type]] = $this->parseSystem($device,$parameters);
-				break;
-			case $deviceType["network"]://网络信息
-			case $deviceType["user"]://终端用户信息
-			case $deviceType["time_reboot"]://定时重启信息
-			case $deviceType["upgrade"]://升级信息
-				$res[$deviceTypeFlip[$paramsInfo->type]] = $parameters;
-				break;
-			case $deviceType["wifi"]://无线信息
-				$res[$deviceTypeFlip[$paramsInfo->type]] = $this->parseWifi($device,$parameters);
-				break;
-			default:
-				throw new \Exception("Unsupport the typeinfo of the device",config("exceptions.DEV_TYPEINFO_IN"));
-				break;
+		if($device->status == config("device.status.online")){
+			switch($paramsInfo->type){
+				case $deviceType["system"]://系统信息
+					$res[$deviceTypeFlip[$paramsInfo->type]] = $this->parseSystem($device,$parameters);
+					break;
+				case $deviceType["network"]://网络信息
+				case $deviceType["user"]://终端用户信息
+				case $deviceType["time_reboot"]://定时重启信息
+				case $deviceType["upgrade"]://升级信息
+					$res[$deviceTypeFlip[$paramsInfo->type]] = $parameters;
+					break;
+				case $deviceType["wifi"]://无线信息
+					$res[$deviceTypeFlip[$paramsInfo->type]] = $this->parseWifi($device,$parameters);
+					break;
+				default:
+					throw new \Exception("Unsupport the typeinfo of the device",config("exceptions.DEV_TYPEINFO_IN"));
+					break;
+			}
+		}else{
+			switch($paramsInfo->type){
+				case $deviceType["system"]://系统信息
+					$res[$deviceTypeFlip[$paramsInfo->type]] = $this->parseSystem($device,$parameters);
+					break;
+				case $deviceType["network"]://网络信息
+				case $deviceType["user"]://终端用户信息
+				case $deviceType["time_reboot"]://定时重启信息
+				case $deviceType["upgrade"]://升级信息
+				case $deviceType["wifi"]://无线信息
+					$res[$deviceTypeFlip[$paramsInfo->type]] = [];
+					break;
+				default:
+					throw new \Exception("Unsupport the typeinfo of the device",config("exceptions.DEV_TYPEINFO_IN"));
+					break;
+			}
 		}
 		return $res;
 	}
 
 	//处理系统信息
 	private function parseSystem($device,$system){
-		$deviceDynamic = $this->cacheRepository->getDeviceDynamic($device->dev_mac);
 		return array_merge(array_intersect_key($system,[
 			"name" => "",
 			"type" => "",
@@ -50,7 +67,7 @@ class DeviceParamsService extends BaseService{
 			"ram" => "",
 			"mode" => "",
 			"version" => ""
-		]),$deviceDynamic);
+		]),["cpu_use" => $device->cpu_use,"memory_use" => $device->memory_use,"runtime" => $device->runtime,"status" => $device->status]);
 	}
 
 	//处理网络信息

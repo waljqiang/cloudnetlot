@@ -27,7 +27,8 @@ let lang = i18n.locale;
 
 export let constantRouterMap = [    //添加新一级路由需要修改 permission.JS 相关判断 constantRouterMap
     { path: '/login', component: () => import('../views/login/index'), hidden: true },
-    { path: '/404', component: () => import('../views/404'), hidden: true },
+	{ path: '/404', component: () => import('../views/404'), hidden: true },
+	{ path: '/register', component: () => import('../views/register'), hidden: true },
     // { path: '/remote', component: () => import('../views/remote'), hidden: true },
     // { path: '/sendEmail', component: () => import('../views/sendEmail'), hidden: true },
     // { path: '/forgetpassword', component: () => import('../views/forgetpassword'), hidden: true },  
