@@ -104,6 +104,7 @@ class TestController extends Controller{
 
     public function testLog(Request $request){
         echo 11;
+        echo date("Y-m-d H:i:s",time());
         logger("123");
     }
 }
