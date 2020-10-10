@@ -121,7 +121,8 @@ return [
     */
 
     'log' => env('APP_LOG', 'daily'),
-
+    'log_name' => env('APP_LOG_NAME','cloudnetlot'),
+    'log_path' => env('APP_LOG_PATH',storage_path('logs') . '/'),
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
     /*

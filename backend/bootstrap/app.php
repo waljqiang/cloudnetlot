@@ -11,7 +11,10 @@
 |
 */
 
-$app = new Illuminate\Foundation\Application(
+/*$app = new Illuminate\Foundation\Application(
+    realpath(__DIR__.'/../')
+);*/
+$app = new App\Utils\Application(
     realpath(__DIR__.'/../')
 );
 

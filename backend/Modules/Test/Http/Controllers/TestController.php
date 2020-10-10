@@ -101,4 +101,9 @@ class TestController extends Controller{
     public function testOplogCache(Request $request){
         return $this->testService->testOplogCache($request->all());
     }
+
+    public function testLog(Request $request){
+        echo 11;
+        logger("123");
+    }
 }

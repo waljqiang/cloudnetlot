@@ -9,4 +9,5 @@ Route::group(['middleware' => ['cloudnetlot'],'prefix' => 'test','namespace' => 
     Route::get('testmail','TestController@testMail');
     Route::get('testyunlot','TestController@testyunlot');
     Route::get('testoplogcache','TestController@testOplogCache');
+    Route::get('testlog','TestController@testLog');
 });
