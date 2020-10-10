@@ -5,7 +5,8 @@ APP_KEY=base64:eJLtBtkGuaSqFrxgizCFaJklrFF1kjragvg0sm2BRzQ=
 APP_TIMEZONE=+08:00
 APP_ISSUMMERTIME=0
 APP_DEBUG=false
-APP_LOG_LEVEL=debug
+APP_LOG_PATH=/var/log/cloudnetlot/
+APP_LOG_LEVEL=error
 APP_URL=http://192.168.33.10
 SELF_BUILD=FALSE
 
