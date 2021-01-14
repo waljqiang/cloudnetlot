@@ -489,144 +489,146 @@
 
 ## 部署
 
-1、git clone https://github.com/waljqiang/laravel.git
+* 部署步骤
 
-2、move ".env.example" to ".env"并做相应配置
+    1、git clone https://github.com/waljqiang/laravel.git
 
-3、配置nginx
+    2、move ".env.example" to ".env"并做相应配置
 
-```
-    前后端分离
-    server{
-        rewrite ^/cloudnetlot$ /cloudnetlot/frontend/vue/ permanent;
-        location /cloudnetlot {
-            rewrite /cloudnetlot/(.*)$ /$1 break;
-            proxy_pass http://192.168.33.10:8062/#/;
+    3、配置nginx
 
-            #proxy settings
-            proxy_redirect off;
-            proxy_set_header Host $proxy_host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
-            proxy_max_temp_file_size 0;
-            proxy_connect_timeout 90;
-            proxy_send_timeout 90;
-            proxy_read_timeout 90;
-            proxy_buffer_size 4k;
-            proxy_buffers 4 32k;
-            proxy_busy_buffers_size 64k;
-            proxy_temp_file_write_size 64k;
-        }
-    }
+    ```
+        前后端分离
+        server{
+            rewrite ^/cloudnetlot$ /cloudnetlot/frontend/vue/ permanent;
+            location /cloudnetlot {
+                rewrite /cloudnetlot/(.*)$ /$1 break;
+                proxy_pass http://192.168.33.10:8062/#/;
 
-    server {
-        listen 8062;
-        server_name 192.168.33.10;
-
-        root /vagrant/cloudnetlot;
-        index index.php index.html index.htm;
-
-        charset utf-8;
-
-        location / {
+                #proxy settings
+                proxy_redirect off;
+                proxy_set_header Host $proxy_host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+                proxy_max_temp_file_size 0;
+                proxy_connect_timeout 90;
+                proxy_send_timeout 90;
+                proxy_read_timeout 90;
+                proxy_buffer_size 4k;
+                proxy_buffers 4 32k;
+                proxy_busy_buffers_size 64k;
+                proxy_temp_file_write_size 64k;
+            }
         }
 
-        location /backend {
-            rewrite /backend/(.+)$ /$1 break;
-            proxy_pass http://192.168.33.10:8162;
+        server {
+            listen 8062;
+            server_name 192.168.33.10;
 
-            #proxy settings
-            proxy_redirect off;
-            proxy_set_header Host $proxy_host;
-            #proxy_set_header Raw-Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
-            proxy_max_temp_file_size 0;
-            proxy_connect_timeout 90;
-            proxy_send_timeout 90;
-            proxy_read_timeout 90;
-            proxy_buffer_size 4k;
-            proxy_buffers 4 32k;
-            proxy_busy_buffers_size 64k;
-            proxy_temp_file_write_size 64k;
-        }
-        #location ~.*\.(gif|gp|gpeg|png|bmp|ico|swf|js|css)$ {
-        #                root /vagrant/Test;
-        #}
+            root /vagrant/cloudnetlot;
+            index index.php index.html index.htm;
 
-        location ~ \.php$ {
-                #fastcgi_pass 192.168.33.10:9000;
-                fastcgi_pass   unix:/var/run/php5-fpm.sock;
-                fastcgi_index /index.php;
+            charset utf-8;
 
-                include fastcgi_params;
-                fastcgi_split_path_info ^(.+\.php)(/.+)$;
-                fastcgi_param PATH_INFO $fastcgi_path_info;
-                fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
-                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        }
+            location / {
+            }
 
-        location ~ /\.ht{
-            deny all;
-        }
+            location /backend {
+                rewrite /backend/(.+)$ /$1 break;
+                proxy_pass http://192.168.33.10:8162;
 
-  }
+                #proxy settings
+                proxy_redirect off;
+                proxy_set_header Host $proxy_host;
+                #proxy_set_header Raw-Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+                proxy_max_temp_file_size 0;
+                proxy_connect_timeout 90;
+                proxy_send_timeout 90;
+                proxy_read_timeout 90;
+                proxy_buffer_size 4k;
+                proxy_buffers 4 32k;
+                proxy_busy_buffers_size 64k;
+                proxy_temp_file_write_size 64k;
+            }
+            #location ~.*\.(gif|gp|gpeg|png|bmp|ico|swf|js|css)$ {
+            #                root /vagrant/Test;
+            #}
 
-  server {
-        listen 8162;
-        server_name 192.168.33.10;
+            location ~ \.php$ {
+                    #fastcgi_pass 192.168.33.10:9000;
+                    fastcgi_pass   unix:/var/run/php5-fpm.sock;
+                    fastcgi_index /index.php;
 
-        root /vagrant/cloudnetlot/backend/public;
-        index index.php index.html index.htm;
+                    include fastcgi_params;
+                    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                    fastcgi_param PATH_INFO $fastcgi_path_info;
+                    fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+                    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            }
 
-        location / {
-            try_files $uri $uri/ /index.php?$query_string;
-        }
+            location ~ /\.ht{
+                deny all;
+            }
 
-        location ~.*\.(gif|gp|gpeg|png|bmp|ico|swf|js|css)$ {
-            root /vagrant;
-        }
-
-        location ~ \.php$ {
-                fastcgi_pass   unix:/var/run/php5-fpm.sock;
-                fastcgi_index index.php;
-                fastcgi_split_path_info ^(.+\.php)(/.*)$;
-                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                fastcgi_param PATH_INFO $fastcgi_path_info;
-                include /etc/nginx/fastcgi.conf;
       }
-  }
+
+      server {
+            listen 8162;
+            server_name 192.168.33.10;
+
+            root /vagrant/cloudnetlot/backend/public;
+            index index.php index.html index.htm;
+
+            location / {
+                try_files $uri $uri/ /index.php?$query_string;
+            }
+
+            location ~.*\.(gif|gp|gpeg|png|bmp|ico|swf|js|css)$ {
+                root /vagrant;
+            }
+
+            location ~ \.php$ {
+                    fastcgi_pass   unix:/var/run/php5-fpm.sock;
+                    fastcgi_index index.php;
+                    fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                    fastcgi_param PATH_INFO $fastcgi_path_info;
+                    include /etc/nginx/fastcgi.conf;
+          }
+      }
 
 
-```
+    ```
 
-4、导入backend下cloudnetlot20191018.sql到数据库
+    4、建立cloudnetlot数据表
 
-5、进入backend目录执行数据迁移
+    5、进入backend目录执行数据迁移
 
-```
-    php artisan migrate
-```
+    ```
+        php artisan migrate
+    ```
 
-6、执行passport秘钥生成
+    6、执行passport秘钥生成
 
-```
-    php artisan passport:install
-```
+    ```
+        php artisan passport:install
+    ```
 
-7、执行认证服务users表数据填充
+    7、执行数据填充
 
-```
-    php artisan db:seeder
-```
+    ```
+        php artisan db:seed
+    ```
 
-* 客户端生成
 
-```
-    php artisan open:client {$account} --clientname='123'
-```
+* 说明
+
+    1、部署完成后，系统默认生成管理员账号、emqx账号。管理员默认账号/密码为：cloudnetlot/123456；emqx默认账号/密码为：cloudnetlot/admin@cloudnetlot。如果想让系统默认生成的管理员账号和密码为其他，则在.env中添加APP_DEFAULT_ADMIN和APP_DEFAULT_PASSWORD即可；如果想让系统默认生成的emqx默认账号和密码为其他，则在执行部署步骤7前，修改.env中的MQ_USERNAME和MQ_PASSWORD即可。
+
 
 ## 自建
 
@@ -711,3 +713,62 @@
 * 执行数据迁移
 
     docker exec -it cloudnetlotserver /bin/bash -c 'cd /usr/local/www/cloudnetlot/backend && php artisan migrate'
+
+#关于License
+
+对于自建环境，会进行license认证。需要将有效的license文件license.txt放入代码的./backend/storage/app/public下。license.txt的生成请使用cloudnetlot项目下的接口生成。
+
+1、生成license接口说明
+
+* 请求地址
+
+    {{host}}/cloudnetlot/backend/license/generate
+
+* 请求方式
+
+    POST
+
+* 请求头
+
+    | 字段| 类型| 必填 | 默认值 | 备注 |
+    |:---:|:---:|:---:|:---:|:---:|
+    |Content-Type|string|是|application/json||
+
+* 请求参数
+
+    | 字段 | 类型 | 必填 | 默认值 | 备注 |
+    |:---:|:---:|:---:|:---:|:---:|
+    |company|string|是||公司名称|
+    |domain|array|是||允许访问的地址|
+    |expire_in|int|是||过期时间，单位天|
+
+* 入参示例
+
+    ```
+    {
+        "company":"小小公司",
+        "domain":["192.168.33.11"],
+        "expire_in":500
+    }
+    ```
+
+* 返回参数
+
+    | 字段 | 类型 | 必填 | 默认值 | 备注 |
+    |:---:|:---:|:---:|:---:|:---:|
+    |status|int|是||接口返回码|
+    |data|object|是||接口返回数据|
+    |data.file|string|否||license文件地址|
+    |errorCode|array|是||接口错误码|
+
+* 返回参数示例
+
+    ```
+    {
+        "status": 10000,
+        "data": {
+            "file": "/vagrant/cloudnetlot/backend/storage/app/public/license.txt"
+        },
+        "errorCode": []
+    }
+    ```

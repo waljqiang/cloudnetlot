@@ -36,7 +36,7 @@ class DevelopService extends BaseService{
 		$list = $develops->map(function($value){
 			$develop = $value->develop;
 			return [
-				"user_id" => app("Hashids")->encodeHash($value->id),
+				"user_id" => $value->id,
 				"username" => $value->username,
 				"nickname" => $value->nickname,
 				"email" => $value->email,

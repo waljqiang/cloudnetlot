@@ -1,6 +1,6 @@
 <?php
 return [
-    "enable" => true,
+    "enable" => env("APP_HASHIDS_ENABLE",FALSE),
     "id" => [
     	"salt" => "cloudnetlot",
 	    "length" => 25,

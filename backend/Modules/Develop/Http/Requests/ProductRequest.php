@@ -29,7 +29,8 @@ class ProductRequest extends FormRequest{
             "prtid" => "required"
         ],
         "publish" => [
-            "prtid" => "required"
+            "prtid" => "required",
+            "lang" => "in:zh-cn,en-us",
         ]
     ];
 	/**
@@ -77,6 +78,7 @@ class ProductRequest extends FormRequest{
             "prtid.required" => config("exceptions.PRT_ID_REQUIRED"),
             "productname.required_without" => config("exceptions.PARAMS_INVALID"),
             "productdes.required_without" => config("exceptions.PARAMS_INVALID"),
+            "lang.in" => config("exceptions.LANG_IN"),
         ];
     }
 

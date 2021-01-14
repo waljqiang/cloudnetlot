@@ -17,7 +17,8 @@ class UserRequest extends FormRequest{
     	],
         "user/password/sendmail" => [
             "username" => "required|exists:users,username",
-            "email" => "required|email"
+            "email" => "required|email",
+            "lang" => "in:zh-cn,en-us"
         ],
         "user/password/checkmail" => [
             "content" => "required"
@@ -26,7 +27,7 @@ class UserRequest extends FormRequest{
             "content" => "required",
             "password" => "required|alpha_num|between:6,20|confirmed"
         ],
-        "save" => [
+        "user/save" => [
             "nickname" => "required_without:phonecode,phone,email|regex:/^[\x{4e00}-\x{9fa5}a-zA-Z0-9_]{1,20}$/iuD",
             "phonecode" => "required_without:nickname,phone,email|required_with:phone|exists:country_code,phonecode",
             "phone" => "required_without:nickname,phonecode,email|required_with:phonecode|phone:phonecode",
@@ -115,7 +116,7 @@ class UserRequest extends FormRequest{
         	"password.between" => config("exceptions.USER_PASSWORD_BETWEEN"),
             "password.confirmed" => config("exceptions.USER_PASSWORD_CONFIRMED"),
             "phonecode.required" => config("exceptions.COUNTRY_PHONECODE_REQUIRED"),
-            "phonecode.required_without" => config("exceptioins.PARAMS_INVALID"),
+            "phonecode.required_without" => config("exceptions.PARAMS_INVALID"),
             "phonecode.required_with" => config("exceptions.PHONE_PHONECODE_REQUIRED"),
             "phonecode.exists" => config("exceptions.COUNTRY_PHONECODE_EXISTS"),
             "phone.required" => config("exceptions.PHONE_REQUIRED"),
@@ -149,6 +150,7 @@ class UserRequest extends FormRequest{
             "uid.required" => config("exceptions.USER_UID_REQURIED"),
             "uids.required" => config("exceptions.USER_UID_REQURIED"),
             "uids.array" => config("exceptions.USER_UID_ARRAY"),
+            "lang.in" => config("exceptions.LANG_IN"),
         ];
     }
 

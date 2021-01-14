@@ -27,7 +27,7 @@ class CountryCodeSeeder extends Seeder
                 }
             }
             array_unshift($datas,$first);
-    		$key = ["name_en-us","name_zh-cn","short2","short3","num","phonecode","created_at","updated_at"];
+    		$key = ["name_en_us","name_zh_cn","short2","short3","num","phonecode","created_at","updated_at"];
     		$insertDatas = [];
     		foreach ($datas as $data) {
     			$data = array_merge($data,[$time,$time]);

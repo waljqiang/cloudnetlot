@@ -65,7 +65,7 @@ class UserService extends BaseService{
 	public function sendPasswordMail($params){
 		$username = array_get($params,'username');
 		$email = array_get($params,'email');
-		$lang = array_get($params,'lang','zh');
+		$lang = array_get($params,'lang','zh-cn');
 		if(!($user = $this->userRepository->getInfos([['username',$username]],[],['*'],true))){
 			throw new \Exception("The user is not exists",config('exceptions.USER_NO_EXISTS'));		
 		}
@@ -81,8 +81,7 @@ class UserService extends BaseService{
 			'time' => $time->copy()->addSeconds(config('public.mailtopassword.expire_in'))->timestamp
 		];
 
-		$url = config("app.url") . "/" . config("app.name") . "/frontend/resetpasswordmail.html?text=" . $this->innerDYEncrypt(http_build_query($urlParams)) . "&lang=" . $lang;
-
+		$url = config("public.mailtopassword.url") . "?text=" . $this->innerDYEncrypt(http_build_query($urlParams)) . "&lang=" . $lang;
 		$trans = config('public.mailtopassword.trans.' . $lang);
 		$subject = array_pull($trans,'subject');
 		$trans['lang2'] = sprintf($trans['lang2'],floor(config('public.mailtopassword.expire_in')/60));
@@ -90,7 +89,7 @@ class UserService extends BaseService{
 		Mail::send('emails.findpassword',[
 			'username' => $username,
 			'url' => $url,
-			'time' => convUnixToZoneGm($time,$user->timeZone,$user->isSummerTime),
+			'time' => convUnixToZoneGm($time->timestamp,$user->timeZone,$user->isSummerTime),
 			'body' => $trans
 		],function($message) use ($email,$subject){
 			$message->to($email)->subject($subject);
@@ -257,13 +256,12 @@ class UserService extends BaseService{
     	if(($pageIndex-1) * $pageOffset > $total){
     		$list = [];
     	}else{
-    		$hashids = app('Hashids');
-    		$list = $this->userRepository->getInfos($condition,[],['*'],false,$order,$page)->map(function($value) use ($hashids){
+    		$list = $this->userRepository->getInfos($condition,[],['*'],false,$order,$page)->map(function($value){
 				return [
-					"uid" => $hashids->encodeHash($value->id),
+					"uid" => $value->id,
 					"username" => $value->username,
         			"nickname" => $value->nickname,
-        			"pid" => $hashids->encodeHash($value->pid),
+        			"pid" => $value->pid,
         			"email" => $value->email,
         			"phonecode" => $value->phonecode,
         			"phone" => $value->phone,

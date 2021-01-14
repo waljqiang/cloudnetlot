@@ -1,5 +1,6 @@
 <template>
-   <div><el-table
+   <div>
+       <el-table
             ref="multipleTable"
             :row-key="getRowKey"
             :height="tableH"
@@ -8,22 +9,22 @@
             :row-class-name="tableRowClassName"
             :header-row-class-name = "tableHeaderClass"
             :cell-class-name="tdClassName" @sort-change="sortChange" @selection-change="handleSelectionChange" :data="tableData"  >
-        <template v-for="(colObj,index) in column">
-            <el-table-column   v-if="colObj.type=='selection'" :reserve-selection="true" align="left"   :prop="colObj.prop" :type="colObj.type" :min-width="colObj.width"  :selectable="selectable" >
-            </el-table-column>
-            <el-table-column v-else-if="colObj.type=='id'" align="left" type="index"  :label="colObj.name" width="70px" :sortable="colObj.sortable" >
-                <template slot-scope="scope" >
-                    {{ (pageindex - 1) * pageoffset + scope.$index+1 }}
-                </template>
-            </el-table-column>
-            <el-table-column v-else  :type="colObj.type" align="left" :prop="colObj.sortData" :label="colObj.name" :min-width="colObj.width"  :sortable="colObj.sortable" :show-overflow-tooltip="false" >
-                <template   slot-scope="scope">
-                    <div v-html="scope.row[colObj.prop]" ></div>
-                </template>
-            </el-table-column>
-        </template>
-    </el-table>
-    <template>
+            <template v-for="(colObj,index) in column" >
+                <el-table-column   v-if="colObj.type=='selection'" :key="index" :reserve-selection="true" align="left"   :prop="colObj.prop" :type="colObj.type" :min-width="colObj.width"  :selectable="selectable" >
+                </el-table-column>
+                <el-table-column v-else-if="colObj.type=='id'" :key="index" align="left" type="index"  :label="colObj.name" width="70px" :sortable="colObj.sortable" >
+                    <template slot-scope="scope" >
+                        {{ (pageindex - 1) * pageoffset + scope.$index+1 }}
+                    </template>
+                </el-table-column>
+                <el-table-column v-else  :type="colObj.type" :key="index" align="left" :prop="colObj.sortData" :label="colObj.name" :min-width="colObj.width"  :sortable="colObj.sortable" :show-overflow-tooltip="false" >
+                    <template   slot-scope="scope">
+                        <div v-html="scope.row[colObj.prop]" ></div>
+                    </template>
+                </el-table-column>
+            </template>
+        </el-table>
+        <template>
         <el-pagination v-if="ispage" v-show="total>0"
             class='tableAlign '
             background
@@ -61,15 +62,15 @@ export default {
         })
     },
     watch: {
-        thisdata: function thisdata(newQuestion, oldQuestion) {
+        thisdata(newQuestion, oldQuestion) {
             this.$refs.multipleTable.clearSelection();
             this.addTrList();
         },
-        pageindex: function thisdata(newQuestion, oldQuestion) {
+        pageindex(newQuestion, oldQuestion) {
             this.$refs.multipleTable.clearSelection();
             this.addTrList();
         },
-        pageoffset: function thisdata(newQuestion, oldQuestion) {
+        pageoffset(newQuestion, oldQuestion) {
             this.$refs.multipleTable.clearSelection();
             this.addTrList();
         }
@@ -152,7 +153,7 @@ export default {
                     this.tableData.push(this.thisdata[i])
                 }else{
                     if(this.ispage){
-                   //     this.tableData.push({ istruedata: false });
+                        this.tableData.push({ istruedata: false });
                     }
                 }
             }

@@ -1,12 +1,15 @@
-// 下面这行代码
-// 拿到命令行里参数，比如执行（npm run b projectA）,这个时候projectName就等于projectA
-// 有了这个变量，就可以根据这个名字来读取projectConfig里面的配置了
 let projectName = process.argv[2]
 
-// 下面两行代码 获取projectName后把保存起来，写入到project.js里，方便其它js文件里引入使用
+console.log('\x1B[32m','————————————————您正在打包的项目名是————————————————', projectName);
+
 let fs = require('fs')
+
+// 记录正在运行的项目名
 fs.writeFileSync('./config/project.js', `exports.name = '${projectName}'`)
 
-// 下面两行代码继续执行命令（npm run build），执行默认命令开始进行打包
+
+// 启动一个新的进程，并执行命令
 let exec = require('child_process').execSync;
 exec('npm run build', {stdio: 'inherit'});
+
+

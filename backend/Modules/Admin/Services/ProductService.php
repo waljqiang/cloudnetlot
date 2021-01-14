@@ -31,7 +31,7 @@ class ProductService extends BaseService{
 				foreach ($products as $product) {
 					$list[] = [
 						"prtid" => $product->prtid,
-						"uid" => app("Hashids")->encodeHash($product->uid),
+						"uid" => $product->uid,
 						"username" => $product->username,
 						"prtname" => $product->name,
 						"type" => $product->type,

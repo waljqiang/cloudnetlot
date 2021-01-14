@@ -83,8 +83,10 @@ CREATE TABLE `cloudnetlot_device`  (
   `net_ip` varchar(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备外网IP',
   `heartbeat` int(11) UNSIGNED NULL DEFAULT NULL COMMENT '心跳时间',
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备名称',
+  `prtid` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '产品ID',
   `prt_type` tinyint UNSIGNED NOT NULL DEFAULT 1 COMMENT '产品类型,1:网络设备',
   `prt_size` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '产品型号',
+  `cltid` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '客户端ID',
   `type` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '设备型号',
   `mode` tinyint(4) UNSIGNED NOT NULL DEFAULT 1 COMMENT '工作模式1:网关,2:中继,3:WISP,4:WDS,5:AP', 
   `version` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '固件版本',
@@ -120,7 +122,7 @@ CREATE TABLE `cloudnetlot_device`  (
 DROP TABLE IF EXISTS `cloudnetlot_device_params`;
 CREATE TABLE `cloudnetlot_device_params`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `dev_mac` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `dev_mac` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '设备MAC地址',
   `params` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `type` smallint(6) UNSIGNED NOT NULL COMMENT '1 :加密,2:系统 ,3: 网络,4: 无线,5:用户,6:定时重启,7:升级,8:绑定设备',
   `is_del` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除标志位,0:没有删除,1:已经删除',
@@ -261,7 +263,7 @@ CREATE TABLE `cloudnetlot_users`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT ' 用户ID',
   `username` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '用户名',
   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '密码',
-  `mq_password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'mq密码',
+  `mq_password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'mq密码',
   `salt` varchar(35) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'mq加密盐值',
   `nickname` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '用户昵称',
   `pid` bigint(20) NOT NULL DEFAULT '0' COMMENT '父账号id',
@@ -341,12 +343,16 @@ DROP TABLE IF EXISTS `cloudnetlot_command`;
 CREATE TABLE `cloudnetlot_command` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) unsigned NOT NULL COMMENT '用户ID',
-  `dev_mac` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '设备MAC',
+  `dev_mac` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备MAC',
   `comm_id` varchar(25) NOT NULL COMMENT '命令ID',
   `content` text NOT NULL COMMENT '命令内容',
   `describe` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
   `type` smallint(6) unsigned NOT NULL COMMENT '命令类型',
   `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态,1:未发送,2:已发送,3:执行失败,4:执行成功',
+  `dev_ip` varchar(25) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备IP',
+  `dev_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备名称',
+  `dev_version` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '固件版本',
+  `dev_type` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备型号',
   `is_del` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '删除标志位,0:没有删除,1:已经删除',
   `created_at` bigint(13) unsigned DEFAULT NULL COMMENT '创建时间',
   `updated_at` bigint(13) unsigned DEFAULT NULL COMMENT '更新时间',
@@ -361,8 +367,8 @@ CREATE TABLE `cloudnetlot_command` (
 DROP TABLE IF EXISTS `cloudnetlot_country_code`;
 CREATE TABLE `cloudnetlot_country_code` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name_en-us` varchar(80) NOT NULL,
-  `name_zh-cn` varchar(80) NOT NULL,
+  `name_en_us` varchar(80) NOT NULL,
+  `name_zh_cn` varchar(80) NOT NULL,
   `short2` char(2) NOT NULL,
   `short3` char(3) NOT NULL,
   `num` varchar(255) NOT NULL,
@@ -379,7 +385,7 @@ DROP TABLE IF EXISTS `cloudnetlot_message_read`;
 CREATE TABLE `cloudnetlot_message_read` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) NOT NULL,
-  `comm_id` varchar(25) NOT NULL,
+  `comm_id` varchar(25) NOT NULL COMMENT '命令表记录ID',
   `created_at` bigint(20) unsigned NOT NULL,
   `updated_at` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`)

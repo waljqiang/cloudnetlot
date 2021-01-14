@@ -4,7 +4,6 @@
 @import './element-ui.scss';
 @import './sidebar.scss';
 
-
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
@@ -76,15 +75,23 @@ a:hover {
 .align_r { text-align:right}
 .clear { clear: both;}
 .fw { font-weight: bolder; font-size: 16px;}
+.mt20 { margin-top: 20px;}
+.ml20{ margin-left: 20px;}
+.mb20 { margin-bottom: 20px;}
+.mr20 { margin-right: 20px;}
 .put_mb5 { margin-bottom: 5px;}
 .put_mb10 { margin-bottom: 10px;}
 .put_mb15 { margin-bottom: 15px;}
 .put_mb20 { margin-bottom: 20px;}
 .put_mb25 { margin-bottom: 25px;}
-
+.jz {margin: 0 auto;}
+.va { vertical-align: middle;}
+#main_scrol>.el-scrollbar__wrap,#window_scrol>.el-scrollbar__wrap {
+	overflow-x: hidden;
+}
 /*public color*/
 .blue_font{ color:$blue_font;}
-
+.red_font{ color:$red_font;}
 
 .out_header {
   width: 100%;
@@ -130,7 +137,7 @@ a:hover {
     overflow: hidden;
 }
 .login_main { width:100%; height: calc(100vh - 70px); background-size: cover; padding: 0;} 
-.tit_ico { width: 5px; height: 12px; display: inline-block; background: $blue_bg; border-radius: 6px; margin-right: 5px;}
+.tit_ico { width: 5px; height: 14px; display: inline-block; background: $blue_bg; border-radius: 6px; margin-right: 5px; vertical-align: sub;}
 .login_footer {width: 100%; line-height: 50px; text-align: center; color: $white_font; position: absolute; bottom: 20px; left: 0;}
 /*table*/
 .table_box { width: 84%; }

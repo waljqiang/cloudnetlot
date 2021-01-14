@@ -13,7 +13,7 @@ class DeviceRequest extends FormRequest{
         ],
         "list" => [
             "gid" => "required",
-            "status" => "in:0,1",
+            "status" => "nullable|in:0,1",
             "sortkey" => "in:dev_ip,name,type,join_time",
             "sort" => "in:asc,desc",
             "pageIndex" => "numeric",
@@ -23,6 +23,19 @@ class DeviceRequest extends FormRequest{
             "mac" => "required",
             "type" => "required|array",
             "type.*" => "in:2,3,4,5,6,7"
+        ],
+        "restarts" => [
+            "macs" => "array",
+            "macs.*" => "required|distinct"
+        ],
+        "clients/onlines" => [
+            "start" => "required|date|before_or_equal:end",
+            "end" => "required|date|after_or_equal:start"
+        ],
+        "transgroup" => [
+            "macs" => "array",
+            "macs.*" => "required|distinct",
+            "gid" => "required"
         ],
     ];
 	/**
@@ -60,6 +73,15 @@ class DeviceRequest extends FormRequest{
             "type.required" => config("exceptions.DEV_TYPEINFO_REQUIRED"),
             "type.array" => config("exceptions.DEV_TYPEINFO_ARRAY"),
             "type.*.in" => config("exceptions.DEV_TYPEINFO_IN"),
+            "macs.array" => config("exceptions.MACS_ARRAY"),
+            "macs.*.required" => config("exceptions.MAC_REQUIRED"),
+            "macs.*.distinct" => config("exceptions.MAC_DISTINCT"),
+            "start.required" => config("exceptions.START_REQUIRED"),
+            "start.date" => config("exceptions.DATE_NO"),
+            "start.before" => config("exceptions.DATE_START_LET_END"),
+            "end.required" => config("exceptions.END_REQUIRED"),
+            "end.date" => config("exceptions.DATE_NO"),
+            "end.after" => config("exceptions.DATE_START_LET_END"),
         ];
     }
 

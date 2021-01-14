@@ -114,8 +114,8 @@ return [
     "USER_UID_ARRAY" => 600400168,//用户ID必须为数组
     "STATUS_IN" => 600400169,//状态必须为0,1,2,3,4
     "DATE_FORMAT" => 600400170,//日期格式不正确
-    "COMMID_ARRAY" => 600400171,//命令ID必须是数组
-    "COMMID_DISTINCT" => 600400172,//命令ID不能重复
+    "ID_ARRAY" => 600400171,//ID必须是数组
+    "ID_DISTINCT" => 600400172,//ID不能重复
     "COMM_NO" => 600400173,//命令不存在
     "DEV_NO_CONNECT" => 600400174,//设备没有连接云平台
     "DEV_USERNAME_REQUIRED" => 600400175,//设备账号必须
@@ -126,6 +126,16 @@ return [
     "DEV_TYPEINFO_REQUIRED" => 600400180,//设备信息类型必须
     "DEV_TYPEINFO_ARRAY" => 600400181,//设备信息类型必须是数组
     "DEV_TYPEINFO_IN" => 600400182,//不支持的设备信息类型
+    "MACS_ARRAY" => 600400183,//设备MACS必须是数组
+    "DEVICE_NO_USER" => 600400184,//有不属于您的设备
+    "DEVICE_NO" => 600400185,//设备不存在
+    "DEVICE_STATUS_NO_ALLOWED" => 600400186,//设备状态不允许
+    "MAC_DISTINCT" => 600400187,//设备MAC不能重复
+    "START_REQUIRED" => 600400188,//起始日期必须
+    "DATE_NO" => 600400189,//非日期格式
+    "DATE_START_LET_END" => 600400190,//起始日期必须小于终止日期
+    "END_REQUIRED" => 600400191,//终止日期必须
+    "ID_REQUIRED" => 600400192,//ID必须
 
     "NAME_REQUIRED" => 600500100,//姓名必须
     "NAME_MAX" => 600500101,//姓名过长

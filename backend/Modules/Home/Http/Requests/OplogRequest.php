@@ -5,6 +5,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class OplogRequest extends FormRequest{
     private $rules = [
+        "statics" => [
+            "status" => "in:0,1,2,3,4"
+        ],
         "list" => [
         	"pageIndex" => "numeric",
         	"pageOffset" => "numeric",
@@ -13,9 +16,12 @@ class OplogRequest extends FormRequest{
         	"sortkey" => "in:created_at,dev_mac,status",
         	"sort" => "in:asc,desc"
         ],
+        "info" => [
+            "id" => "required",
+        ],
         "readed" => [
-            "comm_id" => "array",
-            "comm_id.*" => "distinct"
+            "ids" => "array",
+            "ids.*" => "distinct"
         ]
     ];
 	/**
@@ -40,14 +46,16 @@ class OplogRequest extends FormRequest{
     public function messages()
     {
         return [
+            "status.in" => config("exceptions.STATUS_IN"),
         	"pageIndex.numeric" => config("exceptions.PAGEINDEX_NUMERIC"),
         	"pageOffset.numeric" => config("exceptions.PAGEOFFSET_NUMERIC"),
         	"status.in" => config("exceptions.STATUS_IN"),
         	"date.date_format" => config("exceptions.DATE_FORMAT"),
         	"sortkey.in" => config("exceptions.UNSUPPORT_SORTKEY"),
         	"sort.in" => config("exceptions.UNSUPPORT_SORT"),
-            "comm_id.array" => config("exceptions.COMMID_ARRAY"),
-            "comm_id.*.distinct" => config("exceptions.COMMID_DISTINCT"),
+            "ids.array" => config("exceptions.ID_ARRAY"),
+            "ids.*.distinct" => config("exceptions.ID_DISTINCT"),
+            "id.required" => config("exceptions.ID_REQUIRED"),
         ];
     }
 

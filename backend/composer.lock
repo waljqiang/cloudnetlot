@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ddbbe77586606deb2bae72a50ff9f67a",
+    "content-hash": "0394bb8744ab08cfe483edecee90e430",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -4066,7 +4066,7 @@
         },
         {
             "name": "waljqiang/mqtt",
-            "version": "dev-master",
+            "version": "1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waljqiang/emqtt.git",
@@ -4449,6 +4449,7 @@
                 "faker",
                 "fixtures"
             ],
+            "abandoned": true,
             "time": "2018-07-12T10:23:15+00:00"
         },
         {
@@ -5833,8 +5834,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "tymon/jwt-auth": 20,
-        "waljqiang/mqtt": 20
+        "tymon/jwt-auth": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

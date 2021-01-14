@@ -13,9 +13,9 @@ Mock.XHR.prototype.send = function() {
   }
   this.proxy_send(...arguments)
 }
-// Mock.setup({
-//   timeout: '350-600'
-// })
+Mock.setup({
+  timeout: '350-600'
+})
 
 //auth 
 Mock.mock(/\/backend\/auth\/token/, 'post', authApi.token)
@@ -25,6 +25,10 @@ Mock.mock(/\/backend\/auth\/token\/destroy/, 'get', authApi.destroy)
 //user
 Mock.mock(/\/backend\/user\/info/, 'get', userAPI.userinfo)
 Mock.mock(/\/backend\/user\/register/, 'post', userAPI.register)
+Mock.mock(/\/backend\/user\/save/, 'post', userAPI.editInfo)
+Mock.mock(/\/backend\/user\/password\/save/, 'post', userAPI.editUserPwd)
+Mock.mock(/\/backend\/user\/password\/sendmail/, 'post', userAPI.sendEmail)
+Mock.mock(/\/backend\/user\/password\/reset/, 'post', userAPI.resetPwd)
 
 // system
 Mock.mock(/\/backend\/api\/system\/countrycode/, 'get', systemAPI.countrycode)

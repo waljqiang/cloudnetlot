@@ -19,6 +19,23 @@ class OplogService extends BaseService{
 		$this->cacheRepository = $cacheRepository;
 	}
 
+	public function staticsNotices($user,$params){
+		$status = array_get($params,"status",0);
+		$conditions = [];
+		if($user->is_primary){//主账号
+			$userIDs = $user->childs->pluck("id")->toArray();
+		}
+		$userIDs[] = $user->id;
+
+		if(!empty($status)){
+			array_push($conditions,["status",$status]);
+		}
+		array_push($conditions,[function($query)use($userIDs){
+				$query->whereIn("user_id",$userIDs);
+			}]);
+		return $this->commandRepository->statics($conditions);
+	}
+
 	public function getList($user,$params){
 		$pageIndex = array_get($params,"pageIndex",1);
 		$pageOffset = array_get($params,"pageOffset",10);
@@ -26,9 +43,20 @@ class OplogService extends BaseService{
 		$date = array_get($params,"date","");
 		$sortkey = array_get($params,"sortkey","created_at");
 		$sort = array_get($params,"sort","desc");
-		$conditions = [
-			["user_id",$user->id]
-		];
+
+		if($user->is_primary){//主账号
+			$ids = $user->childs->pluck("id")->toArray();
+			$ids[] = $user->id;
+			$conditions = [
+				[function($query)use($ids){
+					$query->whereIn("user_id",$ids);
+				}]
+			];
+		}else{//子账号
+			$conditions = [
+				["user_id",$user->id]
+			];
+		}
 
 		if(!empty($status))
 			array_push($conditions,["status",$status]);
@@ -47,10 +75,10 @@ class OplogService extends BaseService{
     		$commands = $this->commandRepository->getInfos($conditions,["messageReads" => function($query)use($user){
     			$query->where("user_id",$user->id);
     		}],["*"],false,[$sortkey,$sort],[$pageIndex,$pageOffset]);
-    		$hashids = app("Hashids");
-			$list = $commands->map(function($value)use($user,$hashids){
+			$list = $commands->map(function($value)use($user){
 				return [
-					"user_id" => $hashids->encodeHash($value->user_id),
+					"id" => $value->id,
+					"user_id" => $value->user_id,
 					"username" => $value->user->username,
 					"nickname" => $value->user->nickname,
 					"dev_mac" => $value->dev_mac,
@@ -70,28 +98,43 @@ class OplogService extends BaseService{
 		];
 	}
 
+	public function getInfo($user,$params){
+		$id = array_get($params,"id");
+		$command = $this->commandRepository->getInfos([["id",$id]],[],['*'],true);
+		return [
+			"mac" => $command->dev_mac,
+			"ip" => !empty($command->dev_ip) ? $command->dev_ip : "",
+			"dev_type" => !empty($command->dev_type) ? $command->dev_type : "",
+			"name" => !empty($command->dev_name) ? $command->dev_name : "",
+			"status" => $command->status,
+			"type" => $command->type,
+			"version" => !empty($command->dev_version) ? $command->dev_version : "",
+			"created_at" => convUnixToZoneGm($command->created_at,$user->timeZone,$user->isSummerTime)
+		];
+	}
+
 	public function readedMessage($user,$params){
 		$rs = false;
 		$time = Carbon::now()->timestamp;
-		$commIds = array_get($params,"comm_id",[]);
+		$ids = array_get($params,"ids",[]);
 		$conditions = [["user_id",$user->id]];
-		if(!empty($commIds)){
-			array_push($conditions,[function($query)use($commIds){
-				$query->whereIn("comm_id",$commIds);
+		if(!empty($ids)){
+			array_push($conditions,[function($query)use($ids){
+				$query->whereIn("id",$ids);
 			}]);
 		}
 		$commands = $this->commandRepository->getInfos($conditions,["messageReads" => function($query)use($user){
 			$query->where("user_id",$user->id);
 		}]);
 
-		if($commands->isEmpty() || (!empty($commIds) && count($commIds) != $commands->count())){
+		if($commands->isEmpty() || (!empty($ids) && count($ids) != $commands->count())){
 			throw new \Exception("Commands is not exists",config("exceptions.COMM_NO"));
 		}
 		$data = [];
 		$commands->each(function($command)use(&$data,$time,$user){
 			if($command->messageReads->isEmpty()){
 				$data[] = [
-					"comm_id" => $command->comm_id,
+					"comm_id" => $command->id,
 					"user_id" => $user->id,
 					"created_at" => $time,
 					"updated_at" => $time
@@ -110,4 +153,5 @@ class OplogService extends BaseService{
 			return [];
 		}
 	}
+
 }

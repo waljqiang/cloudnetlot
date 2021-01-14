@@ -12,7 +12,7 @@ class Device extends Model{
      *
      * @var array
      */
-    protected $fillable = ["user_id","dev_mac","dev_ip","net_ip","heartbeat","name","prt_type","prt_size","type","mode","version","up_time","pid","area","country","province","city","address","latitude","longtitude","chip","sn","notes","group_id","is_ip_location","is_del","join_time","created_at","updated_at"];
+    protected $fillable = ["user_id","dev_mac","dev_ip","net_ip","heartbeat","name","prtid","prt_type","prt_size","cltid","type","mode","version","up_time","pid","area","country","province","city","address","latitude","longtitude","chip","sn","notes","group_id","is_ip_location","is_del","join_time","online_time","offline_time","created_at","updated_at"];
 
 
     /**
@@ -29,6 +29,10 @@ class Device extends Model{
 	public function commands(){
 		return $this->hasMany(Command::class,"dev_mac","dev_mac");
 	}
+
+    public function clientsStaticsHours(){
+        return $this->hasMany(DeviceClientsStaticsHour::class,"mac","dev_mac");
+    }
 
     public function getParametersAttribute(){
         return $this->params->pluck("params","type")->map(function($value){

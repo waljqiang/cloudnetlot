@@ -1,3 +1,32 @@
+let reg_map = {
+    login_form: [],
+
+}
+
+function check_input(key, min, max) { 
+    var page_map = reg_map[key];
+    for (var i in page_map) {
+        var reg_val = page_map[i].val
+        if (reg_val == '') {
+            if (page_map[i].type.indexOf("noneed") != -1) {
+                continue;
+            }
+        }
+        var types = page_map[i].type.split(' ');
+        for (var p in types) {
+            if (types[p] == "noneed")
+                continue;
+            var reg_type = types[p];
+            var res = check_map[reg_type](reg_val);
+                
+            if (res != true) {          
+                return res;
+            }
+        }
+    }
+    return true;
+}
+
 const checkObj = {
     check_int(str) {//检查整数
         if (str == "" || str == null) {
@@ -80,37 +109,45 @@ const checkObj = {
         }
         return true;
     },
-    check_account(str){
+    check_account(str,action){
         let name_reg = /^[\a-\z\A-\Z0-9\-\_]{3,20}$/;
         if(!name_reg.test(str)){
-            return "account_tips";
+            if(action=='login'){
+                return "account_format_error";
+            }else{
+                return "account_tips";
+            }
+            
         }
         return true;
     },
     check_nickname(str){
         let name_reg = /^[\a-\z\A-\Z0-9\u4E00-\u9FA5\-\_]{1,20}$/;
-        if(!name_reg.test(str)){
+        if(str!=""&&!name_reg.test(str)){
             return "nickname_tips";
         }
         return true;
     },
     check_phone(str){
         let phone_reg = /^[0-9]{6,25}$/;
-        if(str!=""&&!phone_reg.test(str)){
-            return phone_set_error_tips;
+        if(!phone_reg.test(str)){
+            return "phone_set_error_tips";
         }
         return true;
     },
     check_email(str){
         let email_reg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-        if(str!=""&&!email_reg.test(str)){
-            return email_set_error_tips;
+        if(!email_reg.test(str)){
+            return "email_set_error_tips";
         }
         return true;
     },
-    check_user_pwd(str){
+    check_user_pwd(str,action){
         let pwd_reg = /^[\a-\z\A-\Z0-9]{6,20}$/;
         if(!pwd_reg.test(str)){
+            if(action=='login'){
+                return "pwd_format_error";
+            }
             return "pwd_set_error_tips";
         }
         return true;
@@ -695,8 +732,7 @@ const checkObj = {
         }
         return true;
     },
-    check_apthreshold(str)
-    {
+    check_apthreshold(str){
         if((str == "") || (str.length > 3)
             || isNaN(parseInt_dec(str))
             || (parseInt_dec(str) < -95) 
@@ -717,7 +753,13 @@ const checkObj = {
             }
         }
         return true;
-    }
+    },
+    check_adress(str) {
+        if (str == "" || str == null) {        
+            return "address_no_empty";
+        }
+        return true;
+    },
 }
 
 export default checkObj;

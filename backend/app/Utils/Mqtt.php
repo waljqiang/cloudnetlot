@@ -52,7 +52,7 @@ class Mqtt extends Base{
 		$this->disconnect();
 	}
 
-	public function publishAsync($topics, $message,$callBack=NULL, $qos=NULL, $retain=NULL, &$msgid=NULL){
+	public function publishAsync($topics, $message, $qos=NULL, $retain=NULL,$callBack=NULL, &$msgid=NULL){
 		$this->setClientID("devicedown" . uniqid());
 		try{
 			$this->connect();

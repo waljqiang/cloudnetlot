@@ -32,6 +32,7 @@ return [
     "pageIndex" => 1,
     "pageOffset" => 10,
     "mailtopassword" => [//找回密码邮件
+        "url" => env('APP_URL', 'http://localhost') . "/cloudnetlot/frontend/home/index.html#/resetpassword",
         "expire_in" => 600,//过期时间10分钟
         "trans" => [
             "zh-cn" => [
@@ -69,14 +70,14 @@ return [
             "zh-cn" => [
                 "subject" => "CloudNetLot Admin-审批开发者申请",
                 "lang1" => "尊敬的 %s",
-                "lang2" => "您提交的开发者申请已通过，appid为%s,secret为%s,请保存！",
+                "lang2" => "您提交的开发者申请已通过，appid为[%s],secret为[%s],请保存！",
                 "lang3" => "您提交的开发者申请未通过！",
                 "lang4" => "本邮件由CloudNetLot管理平台自动发出，请勿直接回复。"
             ],
             "en-us" => [
                 "subject" => "CloudNetLot Admin-Approve developer application",
                 "lang1" => "Dear %s",
-                "lang2" => "The developer application you submitted has passed,appid is %s,secret is %s,Please keep it!",
+                "lang2" => "The developer application you submitted has passed,appid is [%s],secret is [%s],Please keep it!",
                 "lang3" => "The developer application you submitted failed!",
                 "lang4" => "This email is sent automatically by the CloudNetLot Admin. Please do not reply directly."
             ]

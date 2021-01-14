@@ -39,4 +39,34 @@ class TestService extends BaseService{
 		$rs = $this->cacheRepository->getUserOplogNums($uid);
 		dd($rs);
 	}
+
+	public function testHash($params){
+		dd($params);
+		$result = [
+			"a" => 1,
+			"b" => 2,
+			"c" => [
+				"ca" => 31,
+				"cb" => 32
+			],
+			"d" => [
+				[
+					"da" => 41,
+					"db" => 42
+				]
+			],
+			"f" => [
+				51,52
+			],
+			"g" => [
+				[
+					[
+						"ga" => 61,
+						"gb" => 62
+					]
+				]
+			]
+		];
+		return $result;
+	}
 }

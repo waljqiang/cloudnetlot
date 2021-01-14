@@ -1,14 +1,13 @@
 <template>
-    
         <el-submenu v-if="item.children.length>1" :index="item.path" :show-timeout="0" :hide-timeout="0" >
 			<template slot="title">
-				<img :src="showImg(item.meta.icon)" />
+				<img :src="showImg(item.meta.icon)" style="margin-right:10px" />
 				<span >{{$t('route.'+item.meta.title)}}</span>
 			</template>
 			<el-menu-item v-for="child in item.children" :key="child.path" :index="child.path" >{{$t('route.'+child.meta.title)}}</el-menu-item>
         </el-submenu>
         <el-menu-item v-else :index="item.children[0].path">
-			<img :src="showImg(item.meta.icon)" />
+			<img :src="showImg(item.meta.icon)" style="margin-right:10px" />
 			<span v-text="$t('route.'+item.meta.title)" slot="title"></span>
         </el-menu-item>
 
@@ -31,7 +30,7 @@ export default {
 	},
 	methods: {
 		showImg(name){
-			return require('@/public/img/home/'+name+'.png');
+			return require('@/projects/home/assets/common/'+name+'.png');
 		},
 	},
 	computed: {

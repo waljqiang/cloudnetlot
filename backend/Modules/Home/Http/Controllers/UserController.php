@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Modules\Home\Http\Requests\UserRequest;
 use Modules\Home\Services\UserService;
+use Modules\Home\Services\OplogService;
 
 class UserController extends Controller{
 	private $userService;

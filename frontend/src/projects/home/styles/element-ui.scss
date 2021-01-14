@@ -12,9 +12,12 @@
   padding: 0 15px 0 45px;
   min-width: auto;
 }
+.el-menu-vertical-custom>.el-submenu,.el-menu-vertical-custom>.el-menu-item{
+  margin-top: 20px;
+}
 .el-select {width: 100%;}
 .el-menu-vertical-custom:not(.el-menu--collapse){
-  .el-menu{width: 160px;}
+  .el-menu{min-width: 160px;}
   .is-active:not(.is-opened){ 
     border-left: 5px solid $orange_border; 
     background-color: rgba($color: $white_bg, $alpha: 0.15);
@@ -25,7 +28,7 @@
     background-color: rgba($color: $white_bg, $alpha: 0.15);
     transition:border-color .0s, background-color .0s, color .0s
   }
-  .el-submenu {width: 160px;}
+  .el-submenu {width: 180px;}
   .el-menu-item:hover, .el-menu-item:focus,.el-submenu__title:hover {
     background-color: rgba($color: $white_bg, $alpha: 0.15);
     transition:border-color .0s, background-color .0s, color .0s
@@ -40,6 +43,10 @@
     // background: none !important;
   }
   .is-active { background: $orange_bg;}
+}
+
+.el-pagination.is-background .btn-next:disabled, .el-pagination.is-background .btn-prev:disabled {
+  color: #bbb;
 }
 
 //暂时性解决diolag 问题 https://github.com/ElemeFE/element/issues/2461

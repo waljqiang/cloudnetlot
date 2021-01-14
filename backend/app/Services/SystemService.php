@@ -36,7 +36,7 @@ class SystemService extends BaseService{
 
 	public function getCountryCode($params){
 		$lang = array_get($params,"lang","zh-cn");
-		$nameKey = "name_" . $lang;
+		$nameKey = "name_" . str_replace("-","_",$lang);
 		$datas = $this->countryCodeRepository->getInfos([],[],["*"],false,["id","asc"])->map(function($data)use($nameKey){
 			return [
 				"name" => $data[$nameKey],

@@ -8,7 +8,8 @@ use PHPSocketIO\SocketIO;
 use Lcobucci\JWT\Parser;
 use App\Repositories\CacheRepository;
 use Illuminate\Support\Facades\DB;
-
+use Modules\Home\Repositories\UserRepository;
+use Modules\Home\Repositories\CommandRepository;
 
 class MsgPush extends Command
 {
@@ -17,14 +18,14 @@ class MsgPush extends Command
      *
      * @var string
      */
-    protected $signature = "message-push {action=start : start | restart | reload(平滑重启) | stop | status | connections} {port=9093} {--d : daemon or debug}";
+    protected $signature = "s-message-push {action=start : start | restart | reload(平滑重启) | stop | status | connections} {port=7777} {--d : daemon or debug}";
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "消息推送服务";
+    protected $description = "socketIO消息推送服务";
 
     //token解析器
     private $tokenParser;
@@ -45,18 +46,22 @@ class MsgPush extends Command
     ];
 
     private $cacheRepository;
+    private $userRepository;
+    private $commandRepository;
 
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct(Parser $parser,CacheRepository $cacheRepository)
+    public function __construct(Parser $parser,CacheRepository $cacheRepository,UserRepository $userRepository,CommandRepository $commandRepository)
     {
         parent::__construct();
         $this->tokenParser = $parser;
         $this->signer = new $this->signers[config("jwt.algo")];
         $this->cacheRepository = $cacheRepository;
+        $this->userRepository = $userRepository;
+        $this->commandRepository = $commandRepository;
     }
 
     /**
@@ -119,15 +124,23 @@ class MsgPush extends Command
 
     public function handleOplogUnreads($uid){
         if($oplogNums = $this->cacheRepository->getUserOplogNums($uid)){
-            return $oplogNums["total"] - $oplogNums["reads"];
+            return $oplogNums["unreads"];
         }else{
-            $totals = DB::select("select count(m.id) as nums,count(n.id) as readnums from " . DB::getConfig("prefix") . "command m left join " . DB::getConfig("prefix") . "message_read n on m.comm_id=n.comm_id and m.user_id=n.user_id where m.user_id = ? limit 1",[2]);
-            $oplogNums = [
-                "total" => isset($totals[0]) ? intval($totals[0]->nums) : 0,
-                "reads" => isset($totals[0]) ? intval($totals[0]->readnums) : 0
-            ];
+            $user = $this->userRepository->getInfos([["id",$uid]],[],["*"],true);
+            if($user->is_primary){//主账号
+                $userIDs = $user->childs->pluck("id")->toArray();
+            }
+            $userIDs[] = $user->id;
+            $oplogNums = $this->commandRepository->statics([
+                ["status",3],
+                [
+                    function($query)use($userIDs){
+                        $query->whereIn("user_id",$userIDs);
+                    }
+                ]
+            ]);
             $this->cacheRepository->setUserOplogNums($uid,$oplogNums);
         }
-        return $oplogNums["total"] - $oplogNums["reads"];
+        return intval($oplogNums["unreads"]);
     }
 }

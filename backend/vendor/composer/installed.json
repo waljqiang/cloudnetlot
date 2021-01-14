@@ -847,7 +847,8 @@
             "data",
             "faker",
             "fixtures"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "giggsey/libphonenumber-for-php",
@@ -5683,8 +5684,8 @@
     },
     {
         "name": "waljqiang/mqtt",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
+        "version": "1.4",
+        "version_normalized": "1.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/waljqiang/emqtt.git",
@@ -5701,7 +5702,7 @@
         },
         "time": "2020-01-06T08:36:44+00:00",
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-4": {
                 "Waljqiang\\Mqtt\\": "src/"

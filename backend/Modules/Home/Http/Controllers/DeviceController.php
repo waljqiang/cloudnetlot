@@ -34,4 +34,19 @@ class DeviceController extends Controller{
 		return $this->deviceService->getInfos($request->user(),$request->all());
 	}
 
+	//批量重启设备
+	public function restarts(DeviceRequest $request){
+		return $this->deviceService->restarts($request->user(),$request->all());
+	}
+
+	//按小时统计用户下所有设备上在线用户总数
+	public function staticsOnlineClients(DeviceRequest $request){
+		return $this->deviceService->staticsOnlineClients($request->user(),$request->all());
+	}
+
+	//设备转组
+	public function transGroup(DeviceRequest $request){
+		return $this->deviceService->transGroup($request->user(),$request->all());
+	}
+
 }

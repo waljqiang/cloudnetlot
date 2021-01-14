@@ -2,7 +2,6 @@
 namespace Modules\Home\Entities;
 
 use App\Models\Model;
-use Modules\Home\Entities\Product;
 
 class Client extends Model{
 	protected $table = "develop_client";

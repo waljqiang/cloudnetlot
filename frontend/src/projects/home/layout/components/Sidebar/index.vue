@@ -15,7 +15,10 @@
 				:unique-opened="true"
 				menu-trigger="click"
 			>
-				<sidebar-item v-for="route in MenuArr" v-if="!route.hidden" :key="route.path" :item="route" />	
+				<template v-for="route in MenuArr">
+					<sidebar-item v-if="!route.hidden" :key="route.path" :item="route" />
+				</template>
+					
 			</el-menu>  
       	</el-scrollbar>
   	</div>
@@ -29,7 +32,8 @@ export default {
 		return {
 			collapse:true,
 			MenuArr:"",
-			activeM:this.$route.path
+			activeM:'/home/main',
+			patha:this.$route.path
 		}
 	},
   	components: { SidebarItem },
@@ -55,6 +59,11 @@ export default {
 		},
 		variables() {
 			return variables
+		}
+	},
+	watch:{
+		$route(to,from){
+			this.activeM = to.path
 		}
 	},
   	created(){

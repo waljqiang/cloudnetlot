@@ -8,6 +8,8 @@ use Illuminate\Routing\Controller;
 use Modules\Test\Services\TestService;
 use Waljqiang\Encode\Encode;
 use App\Utils\HashCode;
+use Illuminate\Support\Facades\Redis;
+use App\Utils\LuaScripts;
 
 class TestController extends Controller{
     private $testService;
@@ -40,16 +42,16 @@ class TestController extends Controller{
         $msg = '[{"fun":2,"comm_id":"0002002157303185193","mac":["1"],"type":"2","params":{"wlan_channel":36,"vap":[{"vap_id":4,"vap_enable":1,"vap_hide_ssid":0,"vap_psk_key":"12345678!@#@#@!","vap_encmode":"9","vap_chiper":"7","vap_ssid":"\u5bb6\u5723\u8bde\u8282\u8fd4\u56de\u952e"}],"Now":1573031851}}]';
         
         for($i=0;$i < 100;$i++){
-            $topics[$i] = 'sensor/dev/sub/' . $i;
+            $topics[$i] = 'aa/' . $i . '/app2dev';
         }
 
         try{
-            $mqtt = app('mqtt');
             $msg = '[{"fun":2,"comm_id":"0002005157302980513","mac":["1"],"type":"5","params":{"TimeRebootEnable":1,"TimeReboot_Time":"23","Now":1573029805}}]';
-            //$mqtt->publishSync($topics,$msg);
-            $mqtt->publishAsync($topics,$msg,['onPuback' => function($mqtt,$object){
-                var_dump($object->getMsgID());
-            }],1,0);
+            $res = [];
+            sendToMqtt($topics,$msg,1,0,['onPuback' => function($mqtt,$object) use (&$res){
+                $res[] = $object->getMsgID();
+            }]);
+            return $res;
         }catch(\Exception $e){
             throw new \Exception($e->getMessage(),$e->getCode());
         }
@@ -106,5 +108,16 @@ class TestController extends Controller{
         echo 11;
         echo date("Y-m-d H:i:s",time());
         logger("123");
+    }
+
+    public function testLua(Request $request){
+        $a = Redis::connection()->eval(
+            LuaScripts::test(), 1, "cloudnetlot:tag"
+        );
+        dd($a);
+    }
+
+    public function testHash(Request $request){
+        return $this->testService->testHash($request->all());
     }
 }

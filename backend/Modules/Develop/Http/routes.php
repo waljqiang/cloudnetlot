@@ -19,7 +19,7 @@ Route::group(["prefix" => "develop/user","middleware" => ["cloudnetlotdevelop","
 //产品相关
 Route::group(["prefix" => "develop/product","middleware" => ["cloudnetlotdevelop","auth:cloudnetlotdevelop"],"namespace" => "Modules\Develop\Http\Controllers"],function(){
 	Route::post("register","ProductController@register");//注册产品
-	Route::post("list","ProductController@getList");//获取产品列表
+	Route::post("list","ProductController@getList")->middleware("hash-encode:list.*.uid");//获取产品列表
 	Route::get("info","ProductController@getInfo")->middleware("hash-encode:uid");//获取产品详情
 	Route::post("save","ProductController@save");//编辑产品
 	Route::post("delete","ProductController@delete");//删除产品

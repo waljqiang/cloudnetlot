@@ -7,7 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class HashidsDecode{
+    private $hashids;
 
+    public function __construct(){
+        $this->hashids = app("Hashids");
+    }
     /**
      * Handle an incoming request.
      *
@@ -31,16 +35,15 @@ class HashidsDecode{
 
     private function decode($datas){
         $res = "";
-        $hashids = app('Hashids');
         if(is_array($datas)){
             foreach ($datas as $data) {
-                $value = $hashids->decodeHash($data);
+                $value = $this->hashids->decodeHash($data);
                 if(!empty($value)){
                     $res[] = count($value) == 1 ? $value[0] : $value;
                 }
             }
         }else{
-            $value = $hashids->decodeHash($datas);
+            $value = $this->hashids->decodeHash($datas);
             if(!empty($value)){
                 $res = count($value) == 1 ? $value[0] : $value;
             }

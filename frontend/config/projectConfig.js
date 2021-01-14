@@ -1,27 +1,48 @@
 const projectName = require('./project')
-
 const config = {
-  //project 1
-  develop:{
-      localPath:'./src/projects/develop/',  //项目相对目录
-      rkPath:'/develop/', //项目文件目录
-      buildFilePath:'../dist/develop/', //打包输出的目录名和相对路径
-      rootPath:'/cloudnetlot/frontend/' //前端相对的根目录（固定目录）
-  },
-  //project 2
-  admin:{
-      localPath:'./src/projects/admin/',  //项目相对目录
-      rkPath:'/admin/', //项目文件目录
-      buildFilePath:'../dist/admin/', //打包输出的目录名和相对路径
-      rootPath:'/cloudnetlot/frontend/' //前端相对的根目录（固定目录）
-  },
-  //project 3
-  home:{
-    localPath:'./src/projects/home/',  //项目相对目录
-    rkPath:'/home/', //项目文件目录
-    buildFilePath:'../dist/home/', //打包输出的目录名和相对路径
-    rootPath:'/cloudnetlot/frontend/'//前端相对的根目录（固定目录）
-  },
+    //项目1
+    home: {
+		pages: {
+			index: {
+				publicPath: './', // 基本路径
+				entry: 'src/projects/home/main.js',
+				outputDir: "dist/home",
+				//assetsDir: './assets',
+				envPath:'../env.js',
+				template: 'public/index.html',
+				filename: 'index.html',
+			}	
+		}
+	},
+	//项目2
+	develop: {
+		pages: {
+			index: {
+				publicPath: './', // 基本路径
+				entry: 'src/projects/develop/main.js',
+				outputDir: "dist/develop/",
+				//assetsDir: './assets',
+				envPath:'../env.js',
+				template: 'public/index.html',
+				filename: 'index.html',
+			}
+		}
+	},
+	//项目3
+	admin: {
+		pages: {
+			index: {
+				publicPath: './', // 基本路径
+				entry: 'src/projects/admin/main.js',
+				outputDir: "dist/admin/",
+				//assetsDir: './assets',
+				envPath:'../env.js',
+				template: 'public/index.html',
+				filename: 'index.html',
+			}
+		}
+	}
 }
+
 const configObj = config[projectName.name]
 module.exports = configObj

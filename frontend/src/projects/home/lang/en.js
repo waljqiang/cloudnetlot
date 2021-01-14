@@ -293,7 +293,7 @@ module.exports = {
     set_error_tips2:'Operate failed',
     role_name_tips:'Names can only contain letters, numbers, Chinese, underscores, and underscores. They must be between 1 and 10 bits in length.',
     account_tips:'Accounts can only contain letters, numbers, underscores, and dashes, and must be between 6 and 25 bits in length.',
-    nickname_tips:'Nicknames can only contain letters, numbers, Chinese characters, underscores, and underscores. They must be between 1 and 10 bits in length.',
+    nickname_tips:'Nicknames can only contain letters, numbers, Chinese characters, underscores, and underscores. They must be between 1 and 20 bits in length.',
     get_mode_error_tips:'Failure to retrieve node',
     select_config_device:'Please select the device to be allocated',
     role_bind_accout_tsps:'To delete the role has been bound to the account, you need to unbind before you can delete it!',
@@ -312,7 +312,6 @@ module.exports = {
     pwd_set_error_tips3:'Confirmation password cannot be empty',
     pwd_set_error_tips4:'Two inconsistent passwords',
     phone_set_error_tips:'Incorrect format of mobile phone number',
-    email_set_error_tips:'The Email format is incorrect',
     account_is_repeat:'Account already exists',
     no_bind_role:'Bind one role at least',
     link_suucess:'Send Successed',
@@ -398,5 +397,8 @@ module.exports = {
     guest_no_per2:'The guest account cannot operate',
     guest_no_per3:'The guest role cannot operate',
     role_already:"Roles already exist",
+  },
+  check:{
+    email_set_error_tips:'The Email format is incorrect',
   }
 }

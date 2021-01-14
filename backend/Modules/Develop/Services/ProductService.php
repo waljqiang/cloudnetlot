@@ -18,7 +18,7 @@ class ProductService extends BaseService{
 	}
 
 	public function register($user,$params){
-		if($user->develop->aud_status != 3){
+		if(!$user->develop || $user->develop->aud_status != 3){
 			throw new \Exception("You are not the developer",config("exceptions.NO_PERMISSTION"));
 		}
 		$productName = array_get($params,"productname");
@@ -49,7 +49,7 @@ class ProductService extends BaseService{
 	}
 
 	public function getList($user,$params){
-		if($user->develop->aud_status != 3){
+		if(!$user->develop || $user->develop->aud_status != 3){
 			throw new \Exception("You are not the developer",config("exceptions.NO_PERMISSTION"));
 		}
 		$pageIndex = array_get($params,"pageIndex",1);
@@ -77,7 +77,7 @@ class ProductService extends BaseService{
 			$list = $this->productRepository->getInfos($conditions,[],["*"],false,[$sortKey,$sort],[$pageIndex,$pageOffset])->map(function($product) use ($user){
 				return [
 					"prtid" => $product->prtid,
-					"uid" => app("Hashids")->encodeHash($product->uid),
+					"uid" => $product->uid,
 					"name" => $product->name,
 					"type" => $product->type,
 					"size" => $product->size,
@@ -93,7 +93,7 @@ class ProductService extends BaseService{
 	}
 
 	public function getInfo($user,$params){
-		if($user->develop->aud_status != 3){
+		if(!$user->develop || $user->develop->aud_status != 3){
 			throw new \Exception("You are not the developer",config("exceptions.NO_PERMISSTION"));
 		}
 		$prtid = array_get($params,"prtid");
@@ -118,7 +118,7 @@ class ProductService extends BaseService{
 	}
 
 	public function save($user,$params){
-		if($user->develop->aud_status != 3){
+		if(!$user->develop || $user->develop->aud_status != 3){
 			throw new \Exception("You are not the developer",config("exceptions.NO_PERMISSTION"));
 		}
 		$prtid = array_get($params,"prtid");
@@ -151,7 +151,7 @@ class ProductService extends BaseService{
 	}
 
 	public function delete($user,$params){
-		if($user->develop->aud_status != 3){
+		if(!$user->develop || $user->develop->aud_status != 3){
 			throw new \Exception("You are not the developer",config("exceptions.NO_PERMISSTION"));
 		}
 		$prtid = array_get($params,"prtid");
@@ -171,7 +171,7 @@ class ProductService extends BaseService{
 	}
 
 	public function publish($user,$params){
-		if($user->develop->aud_status != 3){
+		if(!$user->develop || $user->develop->aud_status != 3){
 			throw new \Exception("You are not the developer",config("exceptions.NO_PERMISSTION"));
 		}
 		$prtid = array_get($params,"prtid");

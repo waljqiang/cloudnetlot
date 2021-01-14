@@ -8,6 +8,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * 主账号关联了所有工作组，子账号只关联自己有关的工作组
+ */
+
 class WorkgroupService extends BaseService{
 	private $workgroupRepository;
 
@@ -25,7 +29,7 @@ class WorkgroupService extends BaseService{
 				"gid" => $hashids->encodeHash($value->id),
 				"user_id" => $hashids->encodeHash($value->user_id),
 				"name" => $value->name,
-				"pid" => $hashids->encodeHash($value->pid)
+				"pid" => !empty($value->pid) ? $hashids->encodeHash($value->pid) : 0
 			];
 		});
 

@@ -25,8 +25,8 @@ const messages = {
   }
 }
 export function getLanguage() {
-  //const chooseLanguage = isLang;//Cookies.get('language')
-  // if (chooseLanguage) return chooseLanguage
+  const chooseLanguage = Cookies.get('language')
+  if (chooseLanguage) return chooseLanguage
 
   // if has not choose language
   const language = (navigator.language || navigator.browserLanguage).toLowerCase();

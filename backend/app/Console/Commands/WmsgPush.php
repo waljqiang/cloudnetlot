@@ -7,6 +7,9 @@ use Workerman\Worker;
 use Lcobucci\JWT\Parser;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * 没有控制清楚流程，暂时不使用
+ */
 class WmsgPush extends Command
 {
     /**
@@ -14,7 +17,7 @@ class WmsgPush extends Command
      *
      * @var string
      */
-    protected $signature = "ws-msg-push {action=start : start | restart | reload(平滑重启) | stop | status | connections} {port=9093} {--d : daemon or debug}";
+    protected $signature = "w-message-push {action=start : start | restart | reload(平滑重启) | stop | status | connections} {port=9093} {--d : daemon or debug}";
 
     /**
      * The console command description.
@@ -129,13 +132,9 @@ class WmsgPush extends Command
         });
 
         \Workerman\Timer::add(5, function()use($worker){
-            $infos = DB::table("command")->select(["command.user_id",DB::raw("count(" . DB::getConfig('prefix') . "message_read.id) as counts")])->leftJoin("message_read",function($query){
-                $query->on("command.comm_id","=","message_read.comm_id")->on("command.user_id","=","message_read.user_id");
-            })->whereIn("command.user_id",array_values($this->uids))->groupBy("command.user_id")->get()->pluck("counts","user_id");
-
             foreach($worker->connections as $connection) {
                 if(isset($connection->uid) && in_array($connection->uid,array_values($this->uids)) && isset($infos[$connection->uid])){
-                    $connection->send($infos[$connection->uid]);
+                    $connection->send(10);
                 }
             }
         });

@@ -1,23 +1,23 @@
 <template>
   	<div class="navbar"
-	v-loading.fullscreen.lock="fullscreenLoading"
-    :element-loading-text="loading_txt"
-    :element-loading-background="loading_bgcolor"
+	v-loading.fullscreen.lock="$store.state.globalState.loadding.show"
+    :element-loading-text="$store.state.globalState.loadding.text"
+    :element-loading-background="$store.state.globalState.loadding.bg"
    	>
     <!-- <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/> -->
     <!-- <breadcrumb /> -->
 		<img :src="logo_img" >
 		<div class="frt">
-			<div class="navbar_menu flt" @click="handusercenter" title="个人中心" @mouseenter="navmEnter('userCenter_img')" @mouseleave="navmOut('userCenter_img')" >
+			<div class="navbar_menu flt" @click="goRoute('/user_info')" :title="$t('route.personal_center')" @mouseenter="navmEnter('userCenter_img')" @mouseleave="navmOut('userCenter_img')" >
 				<img :src="userCenter_img" />
 			</div>
-			<!-- <div class="navbar_menu flt"  @mouseenter="navmEnter('msg_img')" @mouseleave="navmOut('msg_img')">
+			<div class="navbar_menu flt" @click="goRoute('/msg')" :title="$t('route.system_message')"  @mouseenter="navmEnter('msg_img')" @mouseleave="navmOut('msg_img')">
 				<img :src="msg_img" />
 			</div>
-			<div class="navbar_menu flt"  @mouseenter="navmEnter('help_img')" @mouseleave="navmOut('help_img')">
+			<div class="navbar_menu flt" @click="goRoute('/help','open')" :title="$t('route.help')"  @mouseenter="navmEnter('help_img')" @mouseleave="navmOut('help_img')">
 				<img :src="help_img" />
-			</div> -->
-			<div class="navbar_menu flt" @click="handlogout"  @mouseenter="navmEnter('logout_img')" @mouseleave="navmOut('logout_img')">
+			</div>
+			<div class="navbar_menu flt" @click="handlogout" :title="$t('route.sys_logout')"  @mouseenter="navmEnter('logout_img')" @mouseleave="navmOut('logout_img')">
 			<img :src="logout_img" />
 			</div>
 		</div>
@@ -58,13 +58,8 @@ export default {
 			userCenter_img:userCenter_img,
 			msg_img:msg_img,
 			help_img:help_img,
-
 			// userName:store.getters.roles.username!=''?store.getters.roles.username : store.getters.roles.account,
 			logo_img:img_logo,
-
-			fullscreenLoading:false,
-            loading_txt:"请稍后……",
-            loading_bgcolor:"rgba(0, 0, 0, 0.7)",
 		}
 	},
 
@@ -73,8 +68,10 @@ export default {
 			return this.$router.options.routes
 		}
 	},
+	beforeCreate() {
+		store.commit('showloadding',{text:this.$t('common.plase_wait')}); 
+	},
 	mounted(){
-		
 	},
 	methods: {
 		navmEnter(key){
@@ -83,8 +80,17 @@ export default {
 		navmOut(key){
 			this[key] = imgObj[key];
 		},
-		handusercenter(){
-			this.$router.push({path:'/userCenter/infos'})
+		goRoute(path,action){
+			if(action == 'open'){
+				let routeUrl = this.$router.resolve({
+                    path: path
+                });
+            	window.open(routeUrl.href, '_blank');
+			}else{
+				if(this.$route.path!='/user_info'){
+					this.$router.push({path:path})
+				}
+			}
 		},
 		
 		handlogout() {
@@ -93,12 +99,12 @@ export default {
 				cancelButtonText: this.$t('msg.cancel_btn'),
 				type: 'warning'
 			}).then(() => {
-				this.fullscreenLoading = true; 
+				this.$store.commit('showloadding',{show:true});
 				this.$store.dispatch('LogOut').then(() => {
 					//loading.close();
 					location.reload() // 为了重新实例化vue-router对象 避免bug
 				}).catch((error) => {
-					this.fullscreenLoading = false;
+					this.$store.commit('showloadding',{show:false});
 					this.$message.error(this.$t('msg.set_error_tips2'));  
 				})
 			

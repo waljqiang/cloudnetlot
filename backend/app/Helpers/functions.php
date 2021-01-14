@@ -65,9 +65,9 @@ function rankSort($items,$id='id',$pid='pid',$sub='sub',$order='id',$sort=SORT_A
     $tree = [];
     if(!empty($items)){
         foreach($items as $item){
+            if(!isset($items[$item[$id]][$sub]))
+                $items[$item[$id]][$sub] = [];
             if(isset($items[$item[$pid]])){
-                if(!isset($items[$item[$id]][$sub]))
-                    $items[$item[$id]][$sub] = [];
                 $items[$item[$pid]][$sub][] = &$items[$item[$id]];
             }else{
                 $tree[] = &$items[$item[$id]];
@@ -115,8 +115,8 @@ function decodePrtID($encrypt){
     return [substr($prtIDArr[0],0,$userIDLength)];
 }
 
-function generateClitid($userID,$productID,$mac){
-    $time = time();
+function generateClitid($userID,$productID,$mac,$time = ""){
+    $time = empty($time) ? time() : $time;
     $macdec = hexdec(parseMac($mac));
     $userIDLength = str_pad(strlen($userID),2,0,STR_PAD_LEFT);
     $productIDLength = str_pad(strlen($productID),2,0,STR_PAD_LEFT);
@@ -175,9 +175,9 @@ function parseBindCode($bind,$key){
     }
 }
 
-function sendToMqtt($topics,$message,$qos=0,$retain=0,$callBack = NULL){
+function sendToMqtt($topics,$message,$qos=0,$retain=0,$callBack = NULL,$isAsync = true,&$msgID = Null){
     try{
-        app("mqtt")->publishAsync($topics,$message,$qos,$retain,$callBack);
+        $isAsync ? app("mqtt")->publishAsync($topics,$message,$qos,$retain,$callBack,$msgID) : app("mqtt")->publishSync($topics,$message,$qos,$retain,$msgID);
         return true;
     }catch(\Exception $e){
         app('log')->error($e->getMessage());
@@ -189,7 +189,10 @@ function getTopic($prtid,$cltid){
     return sprintf(str_replace("+","%s",config("mqtt.topic.devicedown")),$prtid,$cltid);
 }
 
-function getCommand($commType,$body,$timestamp = ""){
+function getCommand($commType,$body,$timestamp = "",$commID = ""){
     $timestamp = empty($timestamp) ? time() : $timestamp;
+    if(empty($commID)){
+        $body = array_merge(["comm_id" => getCommID(config("yunlot.lottype.down"),$commType,$timestamp)],$body);
+    }
     return app("yunlot")->init()->setHeader(["type" => config("yunlot.lottype.down")])->setBody($body)->setNow($timestamp)->out();
 }

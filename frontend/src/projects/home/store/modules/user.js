@@ -7,7 +7,8 @@ const user = {
 	state: {
 		name: '',
 		is_primary: '',
-		roles: []
+		roles: [],
+		infos:{}
 	},
 
 	mutations: {
@@ -19,7 +20,10 @@ const user = {
 		},
 		SET_ROLES: (state, roles) => {
 			state.roles = roles
-		}
+		},
+		SET_INFOS: (state, infos) => {
+			state.infos = infos
+		},
 	},
 
 	actions: {
@@ -46,7 +50,8 @@ const user = {
 			return new Promise((resolve, reject) => {
 				getUserInfo().then(response => {
 					if(response.status==10000){
-						commit('SET_PRIMARY', response.is_primary)            
+						commit('SET_PRIMARY', response.is_primary);
+						commit('SET_INFOS', response);          
 						resolve(response)
 					}else{
 						reject(response)

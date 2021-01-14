@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([["6xt2"],{"6xt2":function(t,e,n){"use strict";n.r(e);var i=n("KHd+"),o=Object(i.a)({},function(){var t=this.$createElement,e=this._self._c||t;return e("transition",{attrs:{name:"fade-transform",mode:"out-in"}},[e("router-view")],1)},[],!1,null,null,null);o.options.__file="index.vue";e.default=o.exports}}]);

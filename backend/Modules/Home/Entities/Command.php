@@ -29,7 +29,7 @@ class Command extends Model{
 	}
 
 	public function messageReads(){
-		return $this->hasMany(MessageRead::class,"comm_id","comm_id");
+		return $this->hasMany(MessageRead::class,"comm_id","id");
 	}
 
 	public function getContentAttribute($value){

@@ -45,7 +45,7 @@ export function getRefreshToken() { // 刷新token 注意这里用到的service
 		refresh_token:getSession('refresh_token')
 	}
 	let baseUrl =  getSession('domain');
-	return axios.post(baseUrl+"/"+requestRootName+'/backend/develop/auth/token/refresh',params)
+	return axios.post(baseUrl+'/cloudnetlot/backend/develop/auth/token/refresh',params)
 	.then((res) => {
 		return Promise.resolve(res.data)
 	})

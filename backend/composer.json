@@ -21,7 +21,7 @@
         "tymon/jwt-auth": "1.0.*@dev",
         "waljqiang/captcha": "^1.1",
         "waljqiang/ftpclient": "^1.5",
-        "waljqiang/mqtt": "dev-master",
+        "waljqiang/mqtt": "^1.0",
         "waljqiang/msgcrypt": "^1.3",
         "waljqiang/yunlot": "^7.2",
         "workerman/phpsocket.io": "^1.1"

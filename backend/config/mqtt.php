@@ -3,8 +3,8 @@ return [
 	"options" => [
 		"address" => env("MQ_ADDRESS","127.0.0.1"),
 		"port" => env("MQ_PORT",1883),
-		"username" => env("MQ_USERNAME",""),
-		"password" => env("MQ_PASSWORD",""),
+		"username" => env("MQ_USERNAME","cloudnetlot"),
+		"password" => env("MQ_PASSWORD","admin@cloudnetlot"),
 		"clean" => env("MQ_CLEAN",true),
 		"qos" => env("MQ_QOS",0),
 		"keepalive" => env("MQ_KEEPALIVE",10),

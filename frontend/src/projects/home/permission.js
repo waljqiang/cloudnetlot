@@ -5,7 +5,7 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // getToken from cookie
 NProgress.configure({ showSpinner: false })// NProgress configuration
 
-const whiteList = ['/login','/sendEmail','/forgetpassword','/register'] // 不重定向白名单
+const whiteList = ['/login','/sendEmail','/forgetpassword','/register','/agreement','/resetpassword'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
 	document.title = "云平台";
 	store.dispatch('pathActive',to.path)
@@ -18,10 +18,9 @@ router.beforeEach((to, from, next) => {
           next()
           NProgress.done() 
       	} else {
-			if (store.getters.roles.length === 0) {
+			if (!store.state.user.infos.data) {
 				store.dispatch('GetInfo').then(infoRes => { // 拉取用户信息
 					if(!infoRes.data.is_primary){//非主账号，删除账号管理路由
-						console.log(router.options.routes)
 						let routeArr = router.options.routes;	
 						for(var i=0;i<routeArr.length;i++){
 							if(routeArr[i].path=='/'){
@@ -37,11 +36,8 @@ router.beforeEach((to, from, next) => {
 					}
 					next()
 				}).catch((err) => {
-					store.dispatch('FedLogOut').then(() => {
-					//Message.error(err || 'Verification failed, please login again')
-					next({ path: '/login' })
+					//next({ path: '/login' })
 				})
-			})
 			} else {
 				next()
 			}
@@ -50,10 +46,10 @@ router.beforeEach((to, from, next) => {
 		window.sessionStorage.removeItem("routeItem");
 		window.sessionStorage.removeItem("system_token");
 		if(whiteList.indexOf(to.path) !== -1) {
-		next()
+			next()
 		} else {
-		next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
-		NProgress.done()
+			next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
+			NProgress.done()
 		}
   	}
 })

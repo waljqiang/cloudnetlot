@@ -26,7 +26,7 @@ class CacheRepository{
 
 	public function clearRegisterByPrtid($prtid){
         return Redis::connection()->eval(
-            LuaScripts::vagueDel(), 1, self::REGISTER . $prtid . ":*"
+            LuaScripts::vagueDel(), 1, self::REGISTER . $prtid
         );
 	}
 
@@ -73,9 +73,23 @@ class CacheRepository{
 		return Redis::hmset(self::DEVICE_DYNAMIC . $mac,$data);
 	}
 
+	public function setDevicesDynamic($macs,$data){
+		Redis::pipeline(function($pipe) use ($macs,$data){
+			foreach ($macs as $mac) {
+				$pipe->hmset(self::DEVICE_DYNAMIC . $mac,$data);
+			}
+		});
+		return true;
+	}
+
 	public function getDeviceDynamic($mac){
 		$data = Redis::hgetall(self::DEVICE_DYNAMIC . $mac);
 		return !empty($data) && $data["status"] == config("device.status.online") ? $data : ["cpu_use" => "0","memory_use" => "0","runtime" => "0","status" => "0"];
+	}
+
+	public function getDeviceDynamicWithField($mac,$field){
+		$rs = Redis::hget(self::DEVICE_DYNAMIC . $mac,$field);
+		return !empty($rs) ? $rs : "";
 	}
 
 	public function getDevicesDynamic($macs){

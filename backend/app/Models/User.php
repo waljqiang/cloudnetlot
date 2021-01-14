@@ -82,6 +82,10 @@ class User extends UserBase implements JWTSubject{
         return $this->belongsTo(Admin::class,"admin_id","id");
     }
 
+    public function childs(){
+        return $this->hasMany(User::class,"pid","id");
+    }
+
     public function getNicknameAttribute($value){
         return !empty($value) ? $value : '';
     }

@@ -7,7 +7,8 @@ export default {
 				"refresh_token": "NDZAZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKdWIyNWxJaXdpYW5ScElqb2llVzkzYVdacEluMC5leUpwYzNNaU9pSm9kSFJ3T2x3dlhDOTNkM2N1ZVc5M2FXWnBMbTVsZENJc0ltRjFaQ0k2SW1oMGRIQTZYQzljTDNkM2R5NTViM2RwWm1rdWJtVjBJaXdpYW5ScElqb2llVzkzYVdacElpd2lhV0YwSWpveE5UVTNNRFEzTVRnM0xDSnVZbVlpT2pFMU5UY3dORGN5TkRjc0ltVjRjQ0k2TVRVMU56QTFORE00Tnl3aWRXbGtJam9pTkRZaWZRLkAxNTU3MDQ3MTg3",
 				"expire": 7200,
 				"refresh_token_expire": 30
-			}
+			},
+			"errorCode": [600400114]
 		}
 	},
 	refresh: res => {

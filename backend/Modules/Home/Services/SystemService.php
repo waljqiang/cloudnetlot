@@ -32,6 +32,7 @@ class SystemService extends BaseService{
 		$product = $this->productRepository->getInfos([["prtid",$prtid]],["user","clients" => function($query) use ($mac){
 			$query->where("mac",$mac);
 		}],["*"],true);
+
 		if(!$product){
 			throw new \Exception("The product is not exists",config("exceptions.PRT_NO"));
 		}
@@ -42,8 +43,8 @@ class SystemService extends BaseService{
 			throw new \Exception("appid or secret error",config("exceptions.APPID_OR_SERCRET_ERROR"));
 		}
 
-		$cltid = generateClitid($product->uid,$product->id,$mac);
 		if($product->clients->isEmpty()){//没有客户端
+			$cltid = generateClitid($product->uid,$product->id,$mac);
 			DB::beginTransaction();
 			$clientID = $this->clientRepository->add([
 				"cltid" => $cltid,
@@ -78,8 +79,10 @@ class SystemService extends BaseService{
             ]);
             $deviceID = $this->deviceRepository->add([
             	"dev_mac" => $mac,
+            	"prtid" => $product->prtid,
             	"prt_type" => $product->type,
             	"prt_size" => $product->size,
+            	"cltid" => $cltid,
             	"type" => $type,
             	"created_at" => $time,
             	"updated_at" => $time
