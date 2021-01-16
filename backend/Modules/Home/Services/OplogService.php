@@ -102,12 +102,19 @@ class OplogService extends BaseService{
 		$id = array_get($params,"id");
 		$command = $this->commandRepository->getInfos([["id",$id]],[],['*'],true);
 		return [
-			"mac" => $command->dev_mac,
-			"ip" => !empty($command->dev_ip) ? $command->dev_ip : "",
-			"dev_type" => !empty($command->dev_type) ? $command->dev_type : "",
-			"name" => !empty($command->dev_name) ? $command->dev_name : "",
-			"status" => $command->status,
+			"id" => $command->id,
+			"user_id" => $command->user_id,
+			"username" => $command->user->username,
+			"nickname" => $command->user->nickname,
+			"common_id" => $command->comm_id,
+			"content" => $command->content,
+			"describe" => $command->describe,
 			"type" => $command->type,
+			"status" => $command->status,
+			"dev_mac" => $command->dev_mac,
+			"dev_ip" => !empty($command->dev_ip) ? $command->dev_ip : "",
+			"dev_type" => !empty($command->dev_type) ? $command->dev_type : "",
+			"dev_name" => !empty($command->dev_name) ? $command->dev_name : "",
 			"version" => !empty($command->dev_version) ? $command->dev_version : "",
 			"created_at" => convUnixToZoneGm($command->created_at,$user->timeZone,$user->isSummerTime)
 		];
@@ -141,9 +148,13 @@ class OplogService extends BaseService{
 				];
 			}
 		});
+
 		if(!empty($data)){
 			$rs = $this->messageReadRepository->addAll($data);
-			$this->cacheRepository->incrOplogNums($user->id,["reads" => 1]);
+			$cacheNums = $this->cacheRepository->getUserOplogNums($user->id);
+			if(isset($cacheNums["unreads"]) && $cacheNums["unreads"] > 0){
+				$this->cacheRepository->incrOplogNums($user->id,["reads" => 1,"unreads" => -1]);
+			}
 		}else{
 			$rs = true;
 		}

@@ -24,7 +24,7 @@ Route::group(["prefix" => "user","middleware" => ["cloudnetlot","auth:cloudnetlo
 	Route::get("info","UserController@getInfo")->middleware("hash-encode:uid#admin_id#pid");//获取用户信息
 	Route::post("save","UserController@save");//修改用户信息
 	Route::post("password/save","UserController@savePassword");//修改用户密码
-	Route::get("child/list","UserController@getChild")->middleware("hash-encode:list.*.uid#list.*.pid");//获取子账号列表
+	Route::post("child/list","UserController@getChild")->middleware("hash-encode:list.*.uid#list.*.pid");//获取子账号列表
 	Route::post("child/add","UserController@addChild")->middleware("hash-decode:gids")->middleware("hash-encode:uid");//创建子账号
 	Route::post("child/save","UserController@saveChild")->middleware("hash-decode:uid#gids");//修改子账号信息
 	Route::post("child/resetspassword","UserController@resetPasswordForChild")->middleware("hash-decode:uids");//批量重置子账号密码
@@ -47,7 +47,7 @@ Route::group(["prefix" => "workgroup","middleware" => ["cloudnetlot","auth:cloud
 Route::group(["prefix" => "oplog","middleware" => ["cloudnetlot","auth:cloudnetlot"],"namespace" => "Modules\Home\Http\Controllers"],function(){
 	Route::get("statics","OplogController@staticsNotices");//操作日志统计
 	Route::post("list","OplogController@getList")->middleware("hash-encode:list.*.id#list.*.user_id");//获取操作日志列表
-	Route::get("info","OplogController@getInfo")->middleware("hash-decode:id");//获取操作日志详情
+	Route::get("info","OplogController@getInfo")->middleware("hash-decode:id")->middleware("hash-encode:id#user_id");//获取操作日志详情
 	Route::post("readed","OplogController@readedMessage")->middleware("hash-decode:ids");//置消息为已读
 });
 
@@ -60,4 +60,10 @@ Route::group(["prefix" => "device","middleware" => ["cloudnetlot","auth:cloudnet
 	Route::post("restarts","DeviceController@restarts");//批量重启设备
 	Route::post("clients/onlines","DeviceController@staticsOnlineClients");
 	Route::post("transgroup","DeviceController@transGroup")->middleware("hash-decode:gid");//设备转组
+	Route::get("list/export","DeviceController@exportLists")->middleware("hash-decode:gid");//设备列表导出
+});
+
+//产品相关
+Route::group(["prefix" => "product","middleware" => ["cloudnetlot","auth:cloudnetlot"],"namespace" => "Modules\Home\Http\Controllers"],function(){
+	Route::get("staticswithdevices","ProductController@staticsWithDevices");//统计各产品下的设备数
 });

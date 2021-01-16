@@ -5,7 +5,10 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Workerman\Worker;
 use Lcobucci\JWT\Parser;
+use App\Repositories\CacheRepository;
 use Illuminate\Support\Facades\DB;
+use Modules\Home\Repositories\UserRepository;
+use Modules\Home\Repositories\CommandRepository;
 
 /**
  * 没有控制清楚流程，暂时不使用
@@ -42,18 +45,23 @@ class WmsgPush extends Command
         "RS512" => \Lcobucci\JWT\Signer\Rsa\Sha512::class,
     ];
 
-    private $uids = [];
+    private $cacheRepository;
+    private $userRepository;
+    private $commandRepository;
 
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct(Parser $parser)
+    public function __construct(Parser $parser,CacheRepository $cacheRepository,UserRepository $userRepository,CommandRepository $commandRepository)
     {
         parent::__construct();
         $this->parser = $parser;
         $this->signer = new $this->signers[config("jwt.algo")];
+        $this->cacheRepository = $cacheRepository;
+        $this->userRepository = $userRepository;
+        $this->commandRepository = $commandRepository;
     }
 
     /**
@@ -85,56 +93,59 @@ class WmsgPush extends Command
         //当连接关闭时回调
         $worker->onClose = function($connection){
             echo $connection->worker->id . "->" . $connection->id . " closed" . PHP_EOL;
-            unset($this->uids[$connection->id]);
             $connection->close("连接关闭");
         };
 
-        //认证处理
+        //收到消息处理
         $worker->onMessage = function($connection,$data){
-            if($uid = $this->auth($connection,$data)){
-                if(!isset($connection->uid)){
-                    $this->uids[$connection->id] = $uid;
-                    $connection->uid = $uid;
-                }  
+            if(!$uid = $this->auth($data)){
+                $connection->close("登录失败");
             }
+            if(!($oplogNums = $this->cacheRepository->getUserOplogNums($uid))){
+                $user = $this->userRepository->getInfos([["id",$uid]],[],["*"],true);
+                if($user->is_primary){//主账号
+                    $userIDs = $user->childs->pluck("id")->toArray();
+                }
+                $userIDs[] = $user->id;
+                $oplogNums = $this->commandRepository->statics([
+                    ["status",3],
+                    [
+                        function($query)use($userIDs){
+                            $query->whereIn("user_id",$userIDs);
+                        }
+                    ]
+                ]);
+                $this->cacheRepository->setUserOplogNums($uid,$oplogNums);
+            }
+            $connection->send(intval($oplogNums["unreads"]));
         };
 
         //推送消息
         $worker->onWorkerStart = function($worker){
-            $this->handleData($worker);
+            //$this->checkHeart($worker);
         };
 
         Worker::runAll();
     }
 
-    public function auth($connection,$data){
+    public function auth($data){
         try{
             $token = $this->parser->parse($data);
             if(!$token->verify($this->signer,config("jwt.secret")) || $token->isExpired()){
-                $connection->close("登录失败");
                 return false;
             }
             $uid = $token->getClaim("sub");
             return $uid;
         }catch(\Exception $e){
-            $connection->close("登录失败");
             return false;
         }
     }
 
-    public function handleData($worker){
+    public function checkHeart($worker){
         \Workerman\Timer::add(30,function()use($worker){
             foreach ($worker->connections as $connection) {
                 if(time() - $connection->time > 60 && !isset($connection->uid)){
                     $connection->close();
-                }
-            }
-        });
-
-        \Workerman\Timer::add(5, function()use($worker){
-            foreach($worker->connections as $connection) {
-                if(isset($connection->uid) && in_array($connection->uid,array_values($this->uids)) && isset($infos[$connection->uid])){
-                    $connection->send(10);
                 }
             }
         });

@@ -48,11 +48,15 @@
 .el-pagination.is-background .btn-next:disabled, .el-pagination.is-background .btn-prev:disabled {
   color: #bbb;
 }
-
+.el-table--mini th, .el-table--mini td { padding: 0px;}
+.el-table th.is-leaf, .el-table td { border-bottom: 1px solid #f4f4f4;}
 //暂时性解决diolag 问题 https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
   transform: none;
   left: 0;
   position: relative;
   margin: 0 auto;
+  border-radius: 7px;
 }
+.el-dialog__header { padding: 0 10px; height: 40px; line-height: 40px;}
+.el-dialog__body { padding: 0px 20px 50px 20px; font-size: 12px;}

@@ -3,6 +3,7 @@ import Mock from 'mockjs'
 import authApi from './auth'
 import userAPI from './user'
 import systemAPI from './system'
+import logAPI from './log'
 
 // Fix an issue with setting withCredentials = true, cross-domain request lost cookies
 // https://github.com/nuysoft/Mock/issues/300
@@ -29,6 +30,15 @@ Mock.mock(/\/backend\/user\/save/, 'post', userAPI.editInfo)
 Mock.mock(/\/backend\/user\/password\/save/, 'post', userAPI.editUserPwd)
 Mock.mock(/\/backend\/user\/password\/sendmail/, 'post', userAPI.sendEmail)
 Mock.mock(/\/backend\/user\/password\/reset/, 'post', userAPI.resetPwd)
+Mock.mock(/\/backend\/user\/child\/list/, 'post', userAPI.userList)
+Mock.mock(/\/backend\/user\/child\/count/, 'get', userAPI.userCount)
+
+//log
+Mock.mock(/\/backend\/oplog\/statics/, 'get', logAPI.statics)
+Mock.mock(/\/backend\/oplog\/list/, 'post', logAPI.list)
+Mock.mock(/\/backend\/oplog\/info/, 'get', logAPI.info)
+Mock.mock(/\/backend\/oplog\/readed/, 'post', logAPI.read)
+
 
 // system
 Mock.mock(/\/backend\/api\/system\/countrycode/, 'get', systemAPI.countrycode)

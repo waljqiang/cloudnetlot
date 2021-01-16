@@ -49,4 +49,9 @@ class DeviceController extends Controller{
 		return $this->deviceService->transGroup($request->user(),$request->all());
 	}
 
+	//设备导出
+	public function exportLists(Request $request){
+		return $this->deviceService->exportLists($request->user(),$request->all());
+	}
+
 }

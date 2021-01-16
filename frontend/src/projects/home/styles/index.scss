@@ -92,6 +92,10 @@ a:hover {
 /*public color*/
 .blue_font{ color:$blue_font;}
 .red_font{ color:$red_font;}
+.light_gray_bg{ background-color:$light_gray_bg;}
+.light_gray_font{ color:$light_gray_font;}
+.light_gray_border{ background-color:$light_gray_border;}
+
 
 .out_header {
   width: 100%;
@@ -138,7 +142,10 @@ a:hover {
 }
 .login_main { width:100%; height: calc(100vh - 70px); background-size: cover; padding: 0;} 
 .tit_ico { width: 5px; height: 14px; display: inline-block; background: $blue_bg; border-radius: 6px; margin-right: 5px; vertical-align: sub;}
-.login_footer {width: 100%; line-height: 50px; text-align: center; color: $white_font; position: absolute; bottom: 20px; left: 0;}
+.login_footer {width: 100%; line-height: 50px; text-align: center; color: $white_font; position: absolute; bottom: 20px; left: 0; border-radius: 5px;}
+.custom_close {width: 30px; height: 30px; line-height: 35px; margin-top: 5px; cursor: pointer;}
+.custom_close:hover { background-color: $red_font_hover; color: $white_font;}
+.custom_close i {font-size: 16px; font-weight: bolder;}
 /*table*/
 .table_box { width: 84%; }
 .tableAlign { text-align: right; height: 30px; margin: 10px 20px 5px 20px;}
@@ -150,7 +157,7 @@ a:hover {
 .table_header th {background:$light_gray_bg;}
 .table_header th .cell { font-weight:300; color: $black_font;}
 
-.row_style { height: 40px; font-size: 12px;}
+.row_style { height: 25px; font-size: 12px;}
 .row_style > th{ padding: 0;}
-.el-table .tr_even { background: #fff;}
-.el-table .tr_odd {  background: #eff0f4;}
+// .el-table .tr_even { background: #fff;}
+// .el-table .tr_odd {  background: #eff0f4;}

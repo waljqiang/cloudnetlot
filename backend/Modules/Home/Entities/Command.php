@@ -14,7 +14,7 @@ class Command extends Model{
      *
      * @var array
      */
-    protected $fillable = ["user_id","dev_mac","comm_id","content","describe","type","status","is_del","created_at","updated_at"];
+    protected $fillable = ["user_id","dev_mac","comm_id","content","describe","type","status","dev_ip","dev_name","dev_version","dev_type","is_del","created_at","updated_at"];
 
 
     /**

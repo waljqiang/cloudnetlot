@@ -33,4 +33,8 @@ class Product extends Model{
         return $this->hasMany(Client::class,"prtid","prtid");
     }
 
+    public function devices(){
+        return $this->hasMany(Device::class,"prtid","prtid");
+    }
+
 }

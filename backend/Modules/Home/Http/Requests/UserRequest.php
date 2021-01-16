@@ -42,6 +42,8 @@ class UserRequest extends FormRequest{
             "pageOffset" => "numeric",
             "sortkey" => "in:username,nickname,role,status,created_at",
             "sort" => "in:asc,desc",
+            "status" => "in:0,1,2",
+            "role" => "nullable|in:1,2"
         ],
         "child/add" => [
             "username" => "required|alpha_dash|between:3,20|unique:users",
@@ -147,6 +149,8 @@ class UserRequest extends FormRequest{
             "pageOffset.numeric" => config("exceptions.PAGEOFFSET_NUMERIC"),
             "sortkey.in" => config("exceptions.UNSUPPORT_SORTKEY"),
             "sort.in" => config("exceptions.UNSUPPORT_SORT"),
+            "status.in" => config("exceptions.USER_STATUS_IN"),
+            "role.in" => config("exceptions.USER_ROLE_IN"),
             "uid.required" => config("exceptions.USER_UID_REQURIED"),
             "uids.required" => config("exceptions.USER_UID_REQURIED"),
             "uids.array" => config("exceptions.USER_UID_ARRAY"),

@@ -263,6 +263,10 @@ export default {
                         err.message = this.$t('msg.account_pwd_error');
                         err.tips = true;
                         break;
+                    case 600400138:
+                        err.message = this.$t('msg.account_pwd_error');
+                        err.tips = true;
+                        break; 
                     default:
                         err.message = this.$t('msg.login_error');
                 }

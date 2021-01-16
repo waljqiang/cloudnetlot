@@ -118,4 +118,8 @@ class User extends UserBase implements JWTSubject{
         return $this->is_primary ? $this->id : $this->pid;
     }
 
+    public function getGidsAttribute($value){
+        return $this->workgroups->pluck("id")->toArray();
+    }
+
 }

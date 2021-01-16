@@ -9,4 +9,12 @@ class ProductRepository extends BaseRepository{
 		return Product::class;
 	}
 
+	public function staticsWithDevices($uid){
+		return $this->makeModel()->whereHas("devices",function($query)use($uid){
+			$query->where("user_id",$uid);
+		})->withCount(["devices" => function($query)use($uid){
+			$query->where("user_id",$uid);
+		}])->get();
+	}
+
 }

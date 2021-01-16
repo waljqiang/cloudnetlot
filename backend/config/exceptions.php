@@ -136,6 +136,7 @@ return [
     "DATE_START_LET_END" => 600400190,//起始日期必须小于终止日期
     "END_REQUIRED" => 600400191,//终止日期必须
     "ID_REQUIRED" => 600400192,//ID必须
+    "USER_STATUS_IN" => 600400193,//账号状态不符合规则
 
     "NAME_REQUIRED" => 600500100,//姓名必须
     "NAME_MAX" => 600500101,//姓名过长

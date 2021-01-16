@@ -18,6 +18,9 @@ router.beforeEach((to, from, next) => {
           next()
           NProgress.done() 
       	} else {
+			if(to.path==from.path){
+				return;
+			}
 			if (!store.state.user.infos.data) {
 				store.dispatch('GetInfo').then(infoRes => { // 拉取用户信息
 					if(!infoRes.data.is_primary){//非主账号，删除账号管理路由

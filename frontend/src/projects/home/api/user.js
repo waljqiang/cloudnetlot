@@ -56,4 +56,20 @@ export function resetPwd(params) {
   })
 }
 
+export function userList(params) {
+  return request({
+    url: 'backend/user/child/list',
+    method: 'post',
+    data:params
+  })
+}
+
+export function userCount(params) {
+  return request({
+    url: 'backend/user/child/count',
+    method: 'get',
+    params
+  })
+}
+
 

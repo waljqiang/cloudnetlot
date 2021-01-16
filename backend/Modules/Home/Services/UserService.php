@@ -229,6 +229,8 @@ class UserService extends BaseService{
     	$keyword = array_get($params,"keyword",NULL);
     	$sortkey = array_get($params,"sortkey","created_at");
     	$sort = array_get($params,"sort","desc");
+    	$status = array_get($params,"status",2);
+    	$role = array_get($params,"role","");
 
     	if(!$user->is_primary){
 			throw new \Exception("No permission",config("exceptions.NO_PERMISSTION"));
@@ -237,6 +239,14 @@ class UserService extends BaseService{
 		$condition = [
 			["pid",$user->id]
 		];
+
+		if(in_array($status,[0,1])){
+			array_push($condition,["status",$status]);
+		}
+
+		if(!empty($role)){
+			array_push($condition,["level",$role]);
+		}
     	
     	if(!is_null($keyword)){
     		$keyword = '%' . $keyword . '%';
@@ -448,8 +458,8 @@ class UserService extends BaseService{
     	if(!$user->is_primary){
 			throw new \Exception("No permission",config("exceptions.NO_PERMISSTION"));
 		}
-		$counts = $this->userRepository->makeModel()->where("pid",$user->id)->select("status",DB::raw("count(*) as total"))->groupBy("status")->get();
-			
+		$counts = $this->userRepository->countChilds($user->id);
+					
 		$total = [
 			"all" => 0,
 			"enabled" => 0,

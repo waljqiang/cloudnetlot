@@ -37,6 +37,9 @@ class DeviceRequest extends FormRequest{
             "macs.*" => "required|distinct",
             "gid" => "required"
         ],
+        "list/export" => [
+            "gid" => "required"
+        ]
     ];
 	/**
      * Get the validation rules that apply to the request.

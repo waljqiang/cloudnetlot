@@ -145,21 +145,19 @@ export let constantRouterMap = [    //添加新一级路由需要修改 permissi
 				component: () => import('../views/user/info/info'),
 				nav:true,
 				hidden: true,
-				meta: { title: 'personal_center', icon: 'usercenter' }
 			},
 			{
 				path: '/msg',
-				component: () => import('../views/msg/info/info'),
+				component: () => import('../views/msg/info/list'),
 				nav:true,
 				hidden: true,
-				meta: { title: 'system_message', icon: 'help_menu' }
+				
 			},
 			{
 				path: '/help',
 				component: () => import('../views/help'),
 				nav:true,
 				hidden: true,
-				meta: { title: 'help', icon: 'help_menu' }
 			},
 		]
     },

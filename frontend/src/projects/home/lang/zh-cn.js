@@ -409,6 +409,7 @@ module.exports = {
     save_success:'保存成功',
     save_error:'保存失败',
     edit_pwd_success:'密码修改成功，请重新登录！',
+    pars_err1:'无效的参数',
     link_err1:'无效的链接',
     link_err2:'链接已过期，请重新发送邮件',
     

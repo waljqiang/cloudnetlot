@@ -11,8 +11,11 @@
 			<div class="navbar_menu flt" @click="goRoute('/user_info')" :title="$t('route.personal_center')" @mouseenter="navmEnter('userCenter_img')" @mouseleave="navmOut('userCenter_img')" >
 				<img :src="userCenter_img" />
 			</div>
-			<div class="navbar_menu flt" @click="goRoute('/msg')" :title="$t('route.system_message')"  @mouseenter="navmEnter('msg_img')" @mouseleave="navmOut('msg_img')">
-				<img :src="msg_img" />
+			<div class="navbar_menu flt" @click="goRoute2('/msg')" :title="$t('route.system_message')"  @mouseenter="navmEnter('msg_img')" @mouseleave="navmOut('msg_img')">
+				<el-badge :hidden="msg_num>0?false:true" :value="msg_num" class="item">
+						<img :src="msg_img" />
+				</el-badge>
+				
 			</div>
 			<div class="navbar_menu flt" @click="goRoute('/help','open')" :title="$t('route.help')"  @mouseenter="navmEnter('help_img')" @mouseleave="navmOut('help_img')">
 				<img :src="help_img" />
@@ -27,6 +30,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import store from '@/projects/home/store'
+import {getToken } from '@/utils/auth'
+
+import io from '@/public/js/socket.io.js'
 
 import logout_img from '@/projects/home/assets/common/logout_ico.png'
 import userCenter_img from '@/projects/home/assets/common/usercenter_ico.png'
@@ -60,6 +66,7 @@ export default {
 			help_img:help_img,
 			// userName:store.getters.roles.username!=''?store.getters.roles.username : store.getters.roles.account,
 			logo_img:img_logo,
+			msg_num:""
 		}
 	},
 
@@ -71,7 +78,27 @@ export default {
 	beforeCreate() {
 		store.commit('showloadding',{text:this.$t('common.plase_wait')}); 
 	},
+
 	mounted(){
+		let _this = this;
+		// 如果服务端不在本机，请把127.0.0.1改成服务端ip
+		var socket = io("http://"+window.location.hostname+":7777");
+		// 当连接服务端成功时触发connect默认事件
+		socket.on("connect", function(){
+		    //发送信息
+		    var time1 = setInterval(function(){
+		    	socket.emit("push_oplog_unreads",getToken());
+		    },5000);
+			socket.on("push_oplog_unreads",function(response){
+				response = JSON.parse(response);
+				if(response.status == 10000){
+					_this.msg_num = Number(response.data);
+				}else{
+					clearInterval(time1);
+					socket.disconnect();
+				}
+			});
+		});
 	},
 	methods: {
 		navmEnter(key){
@@ -90,6 +117,11 @@ export default {
 				if(this.$route.path!='/user_info'){
 					this.$router.push({path:path})
 				}
+			}
+		},
+		goRoute2(path,action){
+			if(this.$route.path!='/msg'){
+				this.$router.push({path:path})
 			}
 		},
 		
@@ -118,7 +150,6 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-
-
+	.el-badge { line-height: 30px;}
 </style>
 

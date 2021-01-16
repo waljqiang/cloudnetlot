@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Utils\HashCode;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DeviceService extends BaseService{
 	private $deviceParamsService;
@@ -34,6 +35,8 @@ class DeviceService extends BaseService{
 		$time = Carbon::now()->timestamp;
 		$prtid = array_get($params,"prtid");
 		$userWorkgroup = $user->workgroups;
+		//账号权限校验
+		$this->checkUserPermission($user,config("public.user.level.child_admin"));
 		if(!empty($gid)){
 			if(!$userWorkgroup->pluck("id")->contains($gid)){
 				throw new \Exception("This workgoup is not exists",config("exceptions.USER_NO_WORKGROUP"));
@@ -54,21 +57,24 @@ class DeviceService extends BaseService{
 		}
 		
 		if($registerInfo["aud_status"] != 4 && $registerInfo["developUid"] != $user->id){//未发布的产品只能绑定开发者账号
+			$this->cacheRepository->setRegister($prtid,$mac,"",config("public.cache.registerttl"));
 			throw new \Exception("The unpublish product just only bind to developer",config("exceptions.PRT_STATUS_NO_ALLOW"));
 		}
 
 		if(empty($registerInfo["cltid"])){//设备还未与云平台建立连接
+			$this->cacheRepository->setRegister($prtid,$mac,"",config("public.cache.registerttl"));
 			throw new \Exception("The device of the product is not connect to cloudnetlot",config("exceptions.DEV_NO_CONNECT"));
 		}
 
 		if(!empty($registerInfo["bindUid"]) && $registerInfo["bindUid"] != $user->id){//绑定其他用户时，需要先解绑
+			$this->cacheRepository->setRegister($prtid,$mac,"",config("public.cache.registerttl"));
 			throw new \Exception("The device is binded to another user",config("exceptions.DEV_BINDED"));
 		}
 
 		//发送绑定命令
 		DB::beginTransaction();
 		if(empty($registerInfo["bind"])){
-			$bindCode = getBindCode($user->id,$mac,$gid);
+			$bindCode = getBindCode($user->primary_id,$mac,$gid);
 			$registerInfo["bind"] = $bindCode;
 			$this->cacheRepository->setRegister($prtid,$mac,$registerInfo,config("public.cache.registerttl"));
 			$rs1 = $this->deviceRepository->save([
@@ -133,7 +139,7 @@ class DeviceService extends BaseService{
 		$pageIndex = array_get($params,"pageIndex",1);
 		$pageOffset = array_get($params,"pageOffset",10);
 		$keyword = array_get($params,"search","");
-		if(!$user->workgroups->pluck("id")->contains($gid)){
+		if(!in_array($gid, $user->gids)){
 			throw new \Exception("The workgroup is not exists",config("exceptions.USER_NO_WORKGROUP"));
 		}
 		$condition = [
@@ -152,7 +158,7 @@ class DeviceService extends BaseService{
 		}
 		$columns = ["user_id","dev_mac","pid","dev_ip","net_ip","name","prt_type","prt_size","type","mode","version","up_time","latitude","longitude","chip","group_id","join_time","created_at"];
 
-		$allDevice = $this->getDevices($user,$condition,[],$columns,$unique = false);
+		$allDevice = $this->getDevices($user,$condition,[],$columns);
 
 		$devices = $allDevice->map(function($device) use ($user){
 			$device->join_time = convUnixToZoneGm($device->join_time,$user->timeZone,$user->isSummerTime);
@@ -236,10 +242,8 @@ class DeviceService extends BaseService{
 	//批量重启设备
 	public function restarts($user,$params){
 		$macs = array_get($params,"macs");
-		//子账号权限校验
-		if(!$user->is_primary && $user->level != config("public.user.level.child_admin")){
-			throw new \Exception("No permission",config("exceptions.NO_PERMISSTION"));
-		}
+		//账号权限校验
+		$this->checkUserPermission($user,config("public.user.level.child_admin"));
 		$devices = $this->getDevices($user,[[function($query) use ($macs){
 			$query->whereIn("dev_mac",$macs);
 		}]]);
@@ -308,7 +312,97 @@ class DeviceService extends BaseService{
 	//设备转组
 	public function transGroup($user,$params){
 		$gid = array_get($params,"gid");
-		dd($gid);
+		$macs = array_get($params,"macs");
+		//校验账号权限
+		$this->checkUserPermission($user,config("public.user.level.child_admin"));
+		//工作组校验
+		if(!in_array($gid,$user->gids)){
+			throw new \Exception("The workgroup is not belongs to you",config("exceptions.USER_NO_WORKGROUP"));
+		}
+		//校验设备
+		$devices = $this->getDevices($user,[[function($query) use ($macs){
+			$query->whereIn("dev_mac",$macs);
+		}]]);
+		$this->checkDevices($macs,$devices);
+
+		$time = Carbon::now()->timestamp;
+		$rs = $this->deviceRepository->save([
+			"group_id" => $gid,
+			"updated_at" => $time
+		],[
+			[function($query)use($macs){
+				$query->whereIn("dev_mac",$macs);
+			}]
+		]);
+		if(!$rs){
+			throw new \Exception("Failure",config("exceptions.MYSQL_EXEC_ERROR"));
+		}
+		return [];
+	}
+
+	//导出设备列表
+	public function exportLists($user,$params){
+		$gid = array_get($params,"gid");
+		if(!in_array($gid, $user->gids)){
+			throw new \Exception("The workgroup is not exists",config("exceptions.USER_NO_WORKGROUP"));
+		}
+		//校验账号权限
+		$this->checkUserPermission($user,config("public.user.level.child_admin"));
+		$condition = [
+			["group_id",$gid],
+			["pid",""]
+		];
+		$columns = ["user_id","dev_mac","pid","dev_ip","net_ip","name","prt_type","prt_size","type","mode","version","up_time","latitude","longitude","chip","group_id","join_time","created_at"];
+
+		$devices = $this->getDevices($user,$condition,[],$columns);
+		/*$devices = $devices->map(function($device) use ($user){
+			$device->join_time = convUnixToZoneGm($device->join_time,$user->timeZone,$user->isSummerTime);
+			$device->created_at = convUnixToZoneGm($device->created_at,$user->timeZone,$user->isSummerTime);
+			return $device;
+		});
+
+		$cellData = array_map(function ($val) use ($timeZone) {
+            return [
+                'status' => $val['status'] == 4 ? trans('screen._online') : trans('screen._offline'),
+                'addtime' => Carbon::createFromFormat("Y-m-d H:i:s", date('Y-m-d H:i:s', $val['addtime']))->addMinutes($timeZone->timeZone * 60)->addMinutes($timeZone->isSummerTime * 60)->toDateTimeString()
+            ];
+
+        }, $result->toArray());*/
+
+        $cellData = $devices->map(function($device)use($user){
+        	$device->join_time = convUnixToZoneGm($device->join_time,$user->timeZone,$user->isSummerTime);
+			$device->created_at = convUnixToZoneGm($device->created_at,$user->timeZone,$user->isSummerTime);
+			return $device;
+        })->toArray();
+        array_unshift($cellData, ["1-12"]);
+
+		$exportName = $user->username . "_" . $gid . "_devices_" . Carbon::now()->toDateTimeString();
+        Excel::create($exportName, function ($excel) use ($cellData) {
+            $excel->setCreator('NovaStar');
+            $excel->setLastModifiedBy("NovaiCare");
+            $excel->setTitle('Data from NovaiCare');
+            $excel->setSubject("Office Excel");
+            $excel->setDescription("NovaStar - NovaiCare");
+            $excel->setKeywords("NovaiCare - History");
+            $excel->setCategory("NovaiCare - Record");
+            $excel->sheet('sheet1', function ($sheet) use ($cellData) {
+                /*$sheet->setWidth(['A' => 25, 'B' => 30]);
+                $sheet->setFontSize(10);
+                $sheet->mergeCells('A1:B1');
+                $sheet->setHeight([1 => 22, 2 => 20]);
+                $sheet->cell('A2:B2', function ($cells) {
+                    $cells->setFontWeight('bold');
+                });
+                for ($i = 1; $i <= count($cellData); $i++) {
+                    if ($i > 2)
+                        $sheet->setHeight($i, 16);
+                    $sheet->row($i, $cellData[$i - 1]);
+                }*/
+                for($i=0;$i < count($cellData);$i++){
+                	$sheet->row($i,$cellData[$i]);
+                }
+            });
+        })->export('xls');
 	}
 
 	protected function getDevices($user,$condition = [],$with = [],$columns = ["*"],$unique = false){
@@ -361,6 +455,14 @@ class DeviceService extends BaseService{
 			});
 			if($flag)
 				throw new \Exception("The status of some device is not allowed",config("exceptions."));
+		}
+		return true;
+	}
+
+	private function checkUserPermission($user,$level){
+		//子账号权限校验
+		if(!$user->is_primary && $user->level <= $level){
+			throw new \Exception("No permission",config("exceptions.NO_PERMISSTION"));
 		}
 		return true;
 	}

@@ -32,7 +32,7 @@ export default {
 		return {
 			collapse:true,
 			MenuArr:"",
-			activeM:'/home/main',
+			activeM:this.$route.path,
 			patha:this.$route.path
 		}
 	},
