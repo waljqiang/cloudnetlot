@@ -84,6 +84,7 @@ a:hover {
 .put_mb15 { margin-bottom: 15px;}
 .put_mb20 { margin-bottom: 20px;}
 .put_mb25 { margin-bottom: 25px;}
+.p10 {padding: 10px;}
 .jz {margin: 0 auto;}
 .va { vertical-align: middle;}
 #main_scrol>.el-scrollbar__wrap,#window_scrol>.el-scrollbar__wrap {
@@ -94,8 +95,7 @@ a:hover {
 .red_font{ color:$red_font;}
 .light_gray_bg{ background-color:$light_gray_bg;}
 .light_gray_font{ color:$light_gray_font;}
-.light_gray_border{ background-color:$light_gray_border;}
-
+.light_gray_border{ border-color: $light_gray_border;}
 
 .out_header {
   width: 100%;

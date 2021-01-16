@@ -4,7 +4,7 @@ import authApi from './auth'
 import userAPI from './user'
 import systemAPI from './system'
 import logAPI from './log'
-
+import groupAPI from './workgroup'
 // Fix an issue with setting withCredentials = true, cross-domain request lost cookies
 // https://github.com/nuysoft/Mock/issues/300
 Mock.XHR.prototype.proxy_send = Mock.XHR.prototype.send
@@ -39,6 +39,8 @@ Mock.mock(/\/backend\/oplog\/list/, 'post', logAPI.list)
 Mock.mock(/\/backend\/oplog\/info/, 'get', logAPI.info)
 Mock.mock(/\/backend\/oplog\/readed/, 'post', logAPI.read)
 
+//groupAPI
+Mock.mock(/\/backend\/workgroup\/all/, 'get', groupAPI.all)
 
 // system
 Mock.mock(/\/backend\/api\/system\/countrycode/, 'get', systemAPI.countrycode)
