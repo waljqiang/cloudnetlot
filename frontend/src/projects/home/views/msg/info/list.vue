@@ -106,7 +106,7 @@ import {oplogStatics,oplogList,getinfo,setRead} from '@/projects/home/api/log'
 import unread from '@/public/img/home/unread.png'
 import readed from '@/public/img/home/readed.png'
 import see from '@/public/img/home/see.png'
-let typeArr = ['','修改设备系统信息','修改设备网络信息','修改设备无线信息','修改设备终端信息','重启设备','升级设备','绑定设备',''];
+let typeArr = ['','修改设备系统信息','修改设备网络信息','修改设备无线信息','修改设备终端信息','重启设备','升级设备','绑定设备','','上报信息'];
 let statusArr = ['命令未发送','命令已发送','命令执行失败','命令执行成功'];
 export default {
     data(){

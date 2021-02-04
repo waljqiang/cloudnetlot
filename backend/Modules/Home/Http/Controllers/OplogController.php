@@ -25,5 +25,9 @@ class OplogController extends Controller{
 	public function readedMessage(OplogRequest $request,OplogService $oplogService){
 		return $oplogService->readedMessage($request->user(),$request->all());
 	}
+	//从新执行命令
+	public function exec(OplogRequest $request,OplogService $oplogService){
+		return $oplogService->exec($request->user(),$request->all());
+	}
 
 }

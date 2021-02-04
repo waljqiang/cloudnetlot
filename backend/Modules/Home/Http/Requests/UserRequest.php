@@ -27,15 +27,15 @@ class UserRequest extends FormRequest{
             "content" => "required",
             "password" => "required|alpha_num|between:6,20|confirmed"
         ],
+        "password/save" => [
+            "old_password" => "required",
+            "new_password" => "required|alpha_num|between:6,20|different:old_password|confirmed"
+        ],
         "save" => [
             "nickname" => "required_without:phonecode,phone,email|regex:/^[\x{4e00}-\x{9fa5}a-zA-Z0-9_]{1,20}$/iuD",
             "phonecode" => "required_without:nickname,phone,email|required_with:phone|exists:country_code,phonecode",
             "phone" => "required_without:nickname,phonecode,email|required_with:phonecode|phone:phonecode",
             "email" => "required_without:nickname,phonecode,phone|email",
-        ],
-        "password/save" => [
-            "old_password" => "required",
-            "new_password" => "required|alpha_num|between:6,20|different:old_password|confirmed"
         ],
         "child/list" => [
             "pageIndex" => "numeric",

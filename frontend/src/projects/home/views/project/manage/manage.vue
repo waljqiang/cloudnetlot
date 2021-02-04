@@ -75,7 +75,7 @@
                                     <span class="from_content" v-text="currentFrom.created_time"></span>
                                 </el-form-item>
                             </el-form>
-                            <p class="align_r">
+                            <p class="align_r" v-if="is_master!='1'" >
                                 <el-button size="mini" @click="editProject" type="primary">编辑</el-button>
                             </p>
                         </el-col>
@@ -210,7 +210,9 @@ export default {
             if(response.status==10000){
                 this.editFrom.tp_id = response.data.fid;
                 this.saveData();
-            }  
+            }else{
+                this.$store.commit('showloadding',{show:false}); 
+            } 
         },
         uploadError(error, file, fileList) {
             fileList = [];

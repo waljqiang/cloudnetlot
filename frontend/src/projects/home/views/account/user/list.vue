@@ -16,13 +16,13 @@
             </div>
             <div class=" frt mr20">
                 <el-input placeholder="请输入内容" size="mini" class="blue_font" v-model="search_data" >
-                    <el-button slot="append" >
+                    <el-button slot="append" @click="changeRole" >
                         <img src="@/public/img/home/search.png" class="va" width="15" height="15" >
                     </el-button>
                 </el-input>
             </div>
             <div class="frt mr20">
-                <el-select v-model="permiss" size="mini" @change="getData" >
+                <el-select v-model="permiss" size="mini" @change="changeRole" >
                     <el-option label="全部角色" value=""></el-option>
                     <el-option label="Admin" value="2"></el-option>
                     <el-option label="Guest" value="1"></el-option>
@@ -251,6 +251,11 @@ export default {
         },
         changeType(status){
             this.account_status = status;
+            this.pageindex = 1;
+            this.getData();
+        },
+        changeRole(){
+            this.pageindex = 1;
             this.getData();
         },
         handleClose(){
@@ -417,6 +422,8 @@ export default {
                 }
             }
             let treeArr = this.$refs.tree.getCheckedKeys();
+            let partreeArr = this.$refs.tree.getHalfCheckedKeys();
+            let groupArr = treeArr.concat(partreeArr);
             if(treeArr.length<=0){
                 this.$message({
                     message: this.$t("msg.project_error_in_empty"),
@@ -433,8 +440,9 @@ export default {
                 "email":this.accountFrom.email,
                 "role":this.accountFrom.role.toString(),
                 "enable":this.accountFrom.status.toString(),
-                "gids":treeArr
+                "gids":groupArr
             }
+            console.log(groupArr)
             if(this.action=='add'){
                 postData.username = this.accountFrom.account;
                 postData.password = this.accountFrom.pwd;
@@ -449,7 +457,7 @@ export default {
                         this.getCount();
                         this.dialogVisible = false;
                     }else{
-                        this.$store.commit('showloadding',{show:false}); 
+                        
                     }
                     
                 }).catch((error) => {
@@ -675,18 +683,19 @@ export default {
 }
 
 </script>
-<style scoped>
+<style lang="scss" scoped>
+@import '@/projects/home/styles/index.scss';
 .el-dropdown-link,.el-dropdown {
     cursor: pointer;
     /* color: #409EFF; */
     padding: 5px;
-    background-color: #f4f5f6;
-    border: 1px solid #e5edf0;
+    background-color: $light_gray_bg;
+    border: 1px solid $light_gray_border2; 
     border-radius:4px;
 }
 .change_type {
     cursor: pointer;
-    border: 1px solid #e5edf0;
+    border: 1px solid $light_gray_border2;
     border-radius:4px;
     line-height: 28px;
 }

@@ -112,6 +112,16 @@ class CacheRepository{
 
 	public function getDeviceDynamic($mac){
 		$data = Redis::hgetall(self::DEVICE_DYNAMIC . $mac);
+		if(empty($data)){//缓存没有的话初始化一下
+			$this->setDeviceDynamic($mac,[
+				"cpu_use" => "0",
+				"memory_use" => "0",
+				"runtime" => "0",
+				"status" => "0",
+				"link" => "-1",
+				"rssi" => "-1"
+			]);
+		}
 		return !empty($data) && isset($data["status"]) && $data["status"] == config("device.status.online") ? $data : ["cpu_use" => "0","memory_use" => "0","runtime" => "0","status" => "0","link" => "-1","rssi" => "-1"];
 	}
 
@@ -123,6 +133,7 @@ class CacheRepository{
 	public function getDevicesDynamic($macs){
 		$res = [];
 		$macs = $macs instanceof \Illuminate\Support\Collection ? $macs->toArray() : $macs;
+		$initMacs = [];
 		if(!empty($macs)){
 			$results = Redis::pipeline(function($pipe)use($macs){
 				foreach ($macs as $mac) {
@@ -130,7 +141,20 @@ class CacheRepository{
 				}
 			});
 			foreach ($macs as $key => $mac) {
+				if(empty($results[$key])){
+					$initMacs[] = $mac;
+				}
 				$res[$mac] = !empty($results[$key]) && isset($results[$key]["status"]) && $results[$key]["status"] == config("device.status.online") ? $results[$key] : ["cpu_use" => "0","memory_use" => "0","runtime" => "0","status" => "0","link" => "-1","rssi" => "-1"];
+			}
+			if(!empty($initMacs)){
+				$this->setDevicesDynamic($initMacs,[
+					"cpu_use" => "0",
+					"memory_use" => "0",
+					"runtime" => "0",
+					"status" => "0",
+					"link" => "-1",
+					"rssi" => "-1"
+				]);
 			}
 		}
 		return $res;
@@ -152,7 +176,9 @@ class CacheRepository{
 	public function deleteTopgraphy($uid,$gids){
 		if(!empty($gids)){
 			return Redis::pipeline(function($pipe)use($uid,$gids){
-				return $pipe->del(self::TOPGRAPHY . $uid . ":" . $gid);
+				foreach ($gids as $gid) {
+					return $pipe->del(self::TOPGRAPHY . $uid . ":" . $gid);
+				}
 			});
 		}
 		return true;

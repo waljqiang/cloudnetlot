@@ -38,69 +38,68 @@ export default {
 			"status": 10000,
 			"data": {
 				"total": 1,
-				"list":[],
-				// "list": [
-				// 	{
-				// 		"id": "cnlzrwmzexrpvkojdglynwqabgdq",
-				// 		"user_id": "cnlngqzpqybvodrlxajemkwagnxy",
-				// 		"username": "cloud",
-				// 		"nickname": "万年路口",
-				// 		"dev_mac": "20:05:05:60:32:6C",
-				// 		"common_id": "000200081610532501",
-				// 		"content": {
-				// 			"header": {
-				// 					"protocol": "v1.0",
-				// 					"type": "2",
-				// 					"encode": "1",
-				// 					"mid": "GS8Z3P1610532502"
-				// 			},
-				// 			"body": {
-				// 					"comm_id": "000200081610532501",
-				// 					"command": {
-				// 						"type": "bind",
-				// 						"bind": "ABMCBQAABgUFAgVxBFMTBBMEAAEDAQNwAwUF",
-				// 						"token": "356a192b7913b04c54574d18c28d46e6395428ab"
-				// 					}
-				// 			},
-				// 			"now": 1610532501
-				// 		},
-				// 		"describe": "",
-				// 		"type": 8,
-				// 		"status": 3,
-				// 		"readed": 0,
-				// 		"created_at": "2021-01-13 18:08:21"
-				// 	},
-				// 	{
-				// 		"id": "cnlzrwmzexrpvkojdglynwqabgdq",
-				// 		"user_id": "cnlngqzpqybvodrlxajemkwagnxy",
-				// 		"username": "cloud",
-				// 		"nickname": "万年路口",
-				// 		"dev_mac": "20:05:05:60:32:6C",
-				// 		"common_id": "000200081610532501",
-				// 		"content": {
-				// 			"header": {
-				// 					"protocol": "v1.0",
-				// 					"type": "2",
-				// 					"encode": "1",
-				// 					"mid": "GS8Z3P1610532502"
-				// 			},
-				// 			"body": {
-				// 					"comm_id": "000200081610532501",
-				// 					"command": {
-				// 						"type": "bind",
-				// 						"bind": "ABMCBQAABgUFAgVxBFMTBBMEAAEDAQNwAwUF",
-				// 						"token": "356a192b7913b04c54574d18c28d46e6395428ab"
-				// 					}
-				// 			},
-				// 			"now": 1610532501
-				// 		},
-				// 		"describe": "",
-				// 		"type": 8,
-				// 		"status": 3,
-				// 		"readed": 0,
-				// 		"created_at": "2021-01-13 18:08:21"
-				// 	}
-				// ]
+				"list": [
+					{
+						"id": "cnlzrwmzexrpvkojdglynwqabgdq",
+						"user_id": "cnlngqzpqybvodrlxajemkwagnxy",
+						"username": "cloud",
+						"nickname": "万年路口",
+						"dev_mac": "20:05:05:60:32:6C",
+						"common_id": "000200081610532501",
+						"content": {
+							"header": {
+									"protocol": "v1.0",
+									"type": "2",
+									"encode": "1",
+									"mid": "GS8Z3P1610532502"
+							},
+							"body": {
+									"comm_id": "000200081610532501",
+									"command": {
+										"type": "bind",
+										"bind": "ABMCBQAABgUFAgVxBFMTBBMEAAEDAQNwAwUF",
+										"token": "356a192b7913b04c54574d18c28d46e6395428ab"
+									}
+							},
+							"now": 1610532501
+						},
+						"describe": "",
+						"type": 10,
+						"status": 3,
+						"readed": 0,
+						"created_at": "2021-01-13 18:08:21"
+					},
+					{
+						"id": "cnlzrwmzexrpvkojdglynwqabgdq",
+						"user_id": "cnlngqzpqybvodrlxajemkwagnxy",
+						"username": "cloud",
+						"nickname": "万年路口",
+						"dev_mac": "20:05:05:60:32:6C",
+						"common_id": "000200081610532501",
+						"content": {
+							"header": {
+									"protocol": "v1.0",
+									"type": "2",
+									"encode": "1",
+									"mid": "GS8Z3P1610532502"
+							},
+							"body": {
+									"comm_id": "000200081610532501",
+									"command": {
+										"type": "bind",
+										"bind": "ABMCBQAABgUFAgVxBFMTBBMEAAEDAQNwAwUF",
+										"token": "356a192b7913b04c54574d18c28d46e6395428ab"
+									}
+							},
+							"now": 1610532501
+						},
+						"describe": "",
+						"type": 8,
+						"status": 3,
+						"readed": 0,
+						"created_at": "2021-01-13 18:08:21"
+					}
+				]
 			},
 			"errorCode": []
 	   	}

@@ -80,26 +80,35 @@ export default {
 	},
 
 	mounted(){
-		return;
+		// return;
 		let _this = this;
-		// 如果服务端不在本机，请把127.0.0.1改成服务端ip
-		var socket = io("http://"+window.location.hostname+":7777");
-		// 当连接服务端成功时触发connect默认事件
-		socket.on("connect", function(){
-		    //发送信息
-		    var time1 = setInterval(function(){
-		    	socket.emit("push_oplog_unreads",getToken());
-		    },5000);
-			socket.on("push_oplog_unreads",function(response){
-				response = JSON.parse(response);
-				if(response.status == 10000){
-					_this.msg_num = Number(response.data);
-				}else{
-					clearInterval(time1);
-					socket.disconnect();
-				}
+		if(soketEnable){
+			// 如果服务端不在本机，请把127.0.0.1改成服务端ip
+			var connectNum = 0;
+			var socket = io(soketHost+":"+soketPort);
+			// 当连接服务端成功时触发connect默认事件
+			socket.on("connect", function(){
+				//发送信息
+				var time1 = setInterval(function(){
+					connectNum += 1;
+					socket.emit("push_oplog_unreads",getToken());
+					if(connectNum>=30){
+						clearInterval(time1);
+						socket.disconnect();
+					}
+				},5000);
+				socket.on("push_oplog_unreads",function(response){
+					response = JSON.parse(response);
+					if(response.status == 10000){
+						_this.msg_num = Number(response.data);
+					}else{
+						clearInterval(time1);
+						socket.disconnect();
+					}
+				});
 			});
-		});
+		}
+		
 	},
 	methods: {
 		navmEnter(key){

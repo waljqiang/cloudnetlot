@@ -22,6 +22,9 @@ class OplogRequest extends FormRequest{
         "readed" => [
             "ids" => "array",
             "ids.*" => "distinct"
+        ],
+        "exec" => [
+            "id" => "required"
         ]
     ];
 	/**

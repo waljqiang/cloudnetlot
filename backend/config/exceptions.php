@@ -185,6 +185,7 @@ return [
     "FID_DISTINCT" => 600400238,//文件ID不能重复
     "DATE_AFTER_NOW" => 600400239,//时间必须晚于现在
     "DEV_TYPE_UNSUPPORT" => 600400240,//不支持的设备型号
+    "COMMAND_RETRY" => 600400241,//命令从新执行次数已达最大限制
 
     "NAME_REQUIRED" => 600500100,//姓名必须
     "NAME_MAX" => 600500101,//姓名过长

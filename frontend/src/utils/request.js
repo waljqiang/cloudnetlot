@@ -4,7 +4,7 @@ import store from '@/projects/home/store'
 import {saveToken,getToken,isTokenExpired,getRefreshToken } from '@/utils/auth'
 
 // 
-var domain = window.location.origin+"/cloudnetlot/" ;
+var domain = window.location.origin+"/"+requestRootName;
 window.sessionStorage.setItem('domain',domain);
 // 创建axios实例
 const service = axios.create({

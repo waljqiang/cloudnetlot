@@ -304,10 +304,12 @@ class UserService extends BaseService{
 
     // 获取子账号信息
     public function getChildInfo($user,$params){
+    	$uid = array_get($params,"uid");
     	if(!$user->is_primary){
 			throw new \Exception("No permission",config("exceptions.NO_PERMISSTION"));
 		}
 		$info = $this->userRepository->getInfos([
+			["id",$uid],
 			["pid",$user->id]
 		],["workgroups"],["*"],true);
 		if(empty($info)){

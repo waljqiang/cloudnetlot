@@ -266,7 +266,7 @@ class DeviceService extends DeviceBaseService{
 		$commID = getCommID(config("yunlot.lottype.down"),config("device.typeinfo.time_reboot"),$time);
 		$command = getCommand(config("device.typeinfo.time_reboot"),["command" => ["type" => "reboot"]],$time,$commID);
 		if(!sendToMqtt([$topic],$command)){
-			throw new \Exception($e->getMessage(),config("exceptions.MQTT_PUBLISH_ERROR"));
+			throw new \Exception("Mqtt publish failure",config("exceptions.MQTT_PUBLISH_ERROR"));
 		}
 		$this->cacheRepository->setDevicesDynamic([$mac],["status" => config("device.status.offline")]);
 		$this->afterOperater([
@@ -316,7 +316,7 @@ class DeviceService extends DeviceBaseService{
 		$command = getCommand(config("device.typeinfo.time_reboot"),["command" => $command],$time,$commID);
 		$topic = getTopic($device->prtid,$device->cltid);
 		if(!sendToMqtt([$topic],$command)){
-			throw new \Exception($e->getMessage(),config("exceptions.MQTT_PUBLISH_ERROR"));
+			throw new \Exception("Mqtt publish failure",config("exceptions.MQTT_PUBLISH_ERROR"));
 		}
 		$this->afterOperater([
 			[
@@ -371,7 +371,7 @@ class DeviceService extends DeviceBaseService{
 			return getTopic($device->prtid,$device->cltid);
 		})->toArray();
 		if(!sendToMqtt($topics,$command)){
-			throw new \Exception($e->getMessage(),config("exceptions.MQTT_PUBLISH_ERROR"));
+			throw new \Exception("Mqtt publish failure",config("exceptions.MQTT_PUBLISH_ERROR"));
 		}
 		$this->cacheRepository->setDevicesDynamic($macs,["status" => config("device.status.offline")]);
 		//记录命令
@@ -572,7 +572,7 @@ class DeviceService extends DeviceBaseService{
 			return getTopic($device->prtid,$device->cltid);
 		})->toArray();
 		if(!sendToMqtt($topics,$command)){
-			throw new \Exception($e->getMessage(),config("exceptions.MQTT_PUBLISH_ERROR"));
+			throw new \Exception("Mqtt publish failure",config("exceptions.MQTT_PUBLISH_ERROR"));
 		}
 		//记录命令
 		$this->afterOperater($records);

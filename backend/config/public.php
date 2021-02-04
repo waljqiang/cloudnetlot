@@ -164,4 +164,5 @@ return [
     ],
     "packagepath" => "upgradepackages",
     "upgradedelay" => 60,
+    "commandretry" => 3,
 ];

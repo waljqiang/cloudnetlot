@@ -76,7 +76,7 @@ class DeviceWifiService extends DeviceBaseService{
 		//发送命令
 		$topic = getTopic($device->prtid,$device->cltid);
 		if(!sendToMqtt([$topic],$command)){
-			throw new \Exception($e->getMessage(),config("exceptions.MQTT_PUBLISH_ERROR"));
+			throw new \Exception("Mqtt publish failure",config("exceptions.MQTT_PUBLISH_ERROR"));
 		}
 		//记录命令
 		$this->afterOperater([
@@ -148,7 +148,7 @@ class DeviceWifiService extends DeviceBaseService{
 			}
 		});
 		if(!sendToMqtt($topics,$command)){
-			throw new \Exception($e->getMessage(),config("exceptions.MQTT_PUBLISH_ERROR"));
+			throw new \Exception("Mqtt publish failure",config("exceptions.MQTT_PUBLISH_ERROR"));
 		}
 		//记录命令
 		$this->afterOperater($records);

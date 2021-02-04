@@ -165,4 +165,29 @@ class OplogService extends BaseService{
 		}
 	}
 
+	public function exec($user,$params){
+		$id = array_get($params,"id");
+		$this->checkUserPermission($user,config("public.user.level.child_admin"));
+		$command = $this->commandRepository->getInfos([
+			["id",$id]
+		],["device"],["*"],true);
+		if(empty($command)){
+			throw new \Exception("Command is not exists",config("exceptions.COMM_NO"));
+		}
+		if($command->retry > config("public.commandretry")){
+			throw new \Exception("Number of times allowed retry",config("exceptions.COMMAND_RETRY"));
+		}
+		$topic = getTopic($command->device->prtid,$command->device->cltid);
+		if(!sendToMqtt([$topic],json_encode($command->content,JSON_UNESCAPED_UNICODE))){
+			throw new \Exception("Mqtt publish failure",config("exceptions.MQTT_PUBLISH_ERROR"));
+		}
+		$this->commandRepository->save([
+			"retry" => $command->retry + 1,
+			"updated_at" => Carbon::now()->timestamp
+		],[
+			["id",$id]
+		]);
+		return [];
+	}
+
 }

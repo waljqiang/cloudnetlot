@@ -4,11 +4,21 @@
     id="conf_tabs"
     v-model="activeName" 
     @tab-click="handleClick" 
-    :stretch="true"
+    :stretch="isstretch"
     :destroy-on-close="true">
-        <el-tab-pane v-if="types!='batch'" label="设备信息" name="first">
+        
+        <el-tab-pane v-if="is_master!='1'&&types=='batch_wifi'" label="无线批量设置" name="batch_wifi">
+            <wireless-batch-counter v-if="types=='batch_wifi'" :devmac="devmac"></wireless-batch-counter>
+        </el-tab-pane>
+        <el-tab-pane v-if="types=='conf'" label="设备信息" name="first">
             <div v-if="infoForm!=''">
-                 <p class="info_title">基本信息</p>
+                <p class="info_title">
+                    <span>基本信息</span>
+                    <span class="el-dropdown frt mr20" style="text-indent:0" @click="refInfo" > 
+                        <i class="el-icon-refresh"></i>
+                    </span>
+                </p>
+                <div class="clear"></div>
                 <el-row class="item_info">
                     <el-col :offset="2" :span="6" >设备型号</el-col>
                     <el-col :span="14">{{infoForm.system.type}}</el-col>
@@ -89,16 +99,22 @@
                 </el-row>
             </div>
         </el-tab-pane>
-        <el-tab-pane label="无线设备" name="second">配置管理</el-tab-pane>
-        <el-tab-pane label="设备重启" name="third">角色管理</el-tab-pane>
-        <el-tab-pane el-tab-pane label="告警设置" name="fourth">定时任务补偿</el-tab-pane>
+        <el-tab-pane  v-if="is_master!='1'&&types=='conf'" label="无线设置" name="second">
+            <wireless-counter v-if="infoForm" :w_data="infoForm.wifi" :devmac="devmac"></wireless-counter>
+        </el-tab-pane>
+        <el-tab-pane  v-if="is_master!='1'&&types=='conf'" label="设备重启" name="third">
+            <reboot-counter v-if="infoForm" :data="infoForm.time_reboot" :devmac="devmac" @back="getParentDevList" ></reboot-counter>
+        </el-tab-pane>
+        <el-tab-pane  v-if="is_master!='1'&&(types=='batch_warn'||types=='conf')" el-tab-pane :label="warnTitle" name="fourth">
+            <warn-counter></warn-counter>
+        </el-tab-pane>
     </el-tabs> 
     <el-dialog
         v-if="infoForm!=''"
-        title=""
         :close-on-click-modal="false"
         :visible.sync="dialogVisible"
         width="600px"
+        append-to-body
         :show-close="false">
             <div slot="title" class="frt" >
                 <div class="custom_close align_c" @click="dialogClose" >
@@ -121,37 +137,50 @@
                             <el-col :span="8">{{item.mac}}</el-col>
                         </el-row>
                     </template>
-                    
                 </el-scrollbar>
             </div>
     </el-dialog>
 </div>
 </template>
 <script>
-import {devInfos} from '@/projects/home/api/device'
+import {devInfos,refresh} from '@/projects/home/api/device'
+import wireless_from from './wireless'
+import wireless_batch_from from './wireless_batch'
+import reboot_from from './reboot'
+import warn_from from './warn_thre'
+import store from '@/projects/home/store'
 export default {
-    props:['types','devmac'],
+    props:['types','devmac','actions'],
     data() {
         return {
-            activeName: 'first',
+            is_master:store.state.user.is_primary,
+            activeName: '',
+            isstretch:true,
             infoForm:'',
-
             dialogVisible:false,
-
+            warnTitle:'',
+            aaa:'&nbsp;',
             encObj : ['',this.$t('device.enc_open'),'WEP','WPAPSK','WPA2PSK','WPAWPA2PSK','WPA3PSK','WPA2WPA3PSK','WPAWPA2EAP','WPA2WPA3EAP']
         };
     },
+    components:{
+        'wireless-counter':wireless_from,
+        'reboot-counter':reboot_from,
+        'warn-counter':warn_from,
+        'wireless-batch-counter':wireless_batch_from
+    },
     methods: {
         handleClick(tab, event) {
-            console.log(tab, event);
+            // console.log(tab, event);
         },
         getInfo(){
             let getData = {
                     "mac":this.devmac,
-                    "type":[2,3,4,5,6,7]
+                    "type":[2,3,4,5,6]
                 }
             devInfos(getData).then(response => { 
             if(response.status==10000){
+                this.$store.commit('showloadding',{show:false}); 
                     response.data.wifi['channelVal'] ='';
                     response.data.wifi['powerVal'] = '';
                     response.data.wifi['beaconVal'] = '';
@@ -225,22 +254,74 @@ export default {
             }
             return uptime;	
         },
+        refInfo(){
+            this.$store.commit('showloadding',{show:true}); 
+            let getData = {
+                macs:[this.devmac],
+                type:[2,3,4,5,6]
+            }
+            refresh(getData).then(response => {  
+               
+                if(response.status==10000){
+                    this.getInfo();
+                }
+            }).catch((error) => {
+                this.$store.commit('showloadding',{show:false}); 
+                this.$message({
+                    message: '',
+                    type: 'error',
+                    offset:100
+                });
+            })
+        },
+        getParentDevList(){
+            this.$emit('list');
+            this.$emit('count');
+        }
     },
-
     created(){
-        this.getInfo();
+        
+        if(this.types=='conf'){
+            this.$store.commit('showloadding',{show:true}); 
+            this.getInfo();
+        }
     },
     beforeMount(){
-
-       
+        if(this.types=='conf'){
+            this.activeName = 'first';
+            this.warnTitle='告警设置';
+            this.isstretch = true;
+        }else{
+            this.isstretch = false;
+            if(this.types=='batch_wifi'){
+                this.activeName = 'batch_wifi';
+            }else if(this.types=='batch_warn'){
+                this.activeName = 'fourth';
+                this.warnTitle='告警批量设置';
+            }
+            
+        }
     },
     mounted(){
-       
+       if(this.types!='conf'){
+           document.getElementsByClassName('el-tabs__nav-wrap')[0].style.padding = '0 0 0 35px';
+       }
+       console.log(this.types)
     }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
+@import '@/projects/home/styles/index.scss';
 .info_title {text-indent: 30px; font-weight: bold;}
 .item_info { line-height: 28px;}
-.el-dialog__header {}
+.el-dropdown {
+    cursor: pointer;    
+    padding: 5px;
+    background-color: $light_gray_bg;
+    border: 1px solid $light_gray_border2; 
+    border-radius:4px;
+}
+.el-dropdown:hover{
+    color: #409EFF; 
+}
 </style>

@@ -247,6 +247,11 @@ export default {
 								"beacon_interval": "100",//信号帧间隔
 								"shortgi": "0",//是否启用shortgi
 								"max_sta": "100",//最大接入用户数
+								"timer": {
+									"enable": "0",
+									"start": "01:00",
+									"end": "02:00"
+							   	},
 								"vap": [//无线虚AP列表
 									 {
 										  "id": "0",//虚AP id
@@ -310,10 +315,202 @@ export default {
 				 },
 				 "time_reboot": {
 					  "enable": "1",//是否开启定时重启
-					  "time": "day1"//重启规则,请参阅《云平台终端协议20200716.docx》中附录A
-				 }
+					  "time": "w5#17"//重启规则,请参阅《云平台终端协议20200716.docx》中附录A
+				 },
+				 
 			},
 			"errorCode": []
 	  	}	
-	}
+	},
+	refresh:res=>{
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   }
+	},
+	setName:res=>{
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   }
+	},
+	reboot:res=>{
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   }
+	},
+	timerestart:res=>{
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   }
+	},
+	deletes:res=>{
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   }
+	},
+	wifiOptions:res=>{
+		return {
+			"status": 10000,
+			"data": {
+				"bandwidth": [
+					"20M",
+					"40M",
+					"20M/40M"
+				],
+				"channel": [
+					1,
+					2,
+					3,
+					4,
+					5,
+					6,
+					7,
+					8,
+					9,
+					10,
+					11,
+					12,
+					13,
+					14,
+					15,
+					16,
+					17
+				],
+				"power": [
+					"12.5",
+					"25",
+					"50",
+					"75",
+					"100"
+				],
+				"encode": [
+					1,
+					2,
+					3
+				],
+				"phymode": [
+					0,
+					1,
+					2,
+					3,
+					4,
+					5,
+					6,
+					7,
+					8,
+					9,
+					10,
+					11,
+					12,
+					13,
+					14,
+					15,
+					16,
+					17,
+					18,
+					19,
+					20
+				]
+			},
+			"errorCode": []
+		}
+	},
+	wifiInfos:res=>{
+		return {
+			"status": 10000,
+			"data": {
+				 "country_code": "CN",
+				 "total": "4",
+				 "bandwidth": "20M",
+				 "channel": "38",
+				 "power": "12.5",
+				 "phymode": "1",
+				 "coveragethreshold": "-90",
+				 "user_isolate": "0",
+				 "frag_threshold": "2346",
+				 "rts_threshold": "2346",
+				 "beacon_interval": "100",
+				 "shortgi": "0",
+				 "max_sta": "100",
+				 "vap": [
+					  {
+						   "id": "0",
+						   "vlan_id": "0",
+						   "enable": "0",
+						   "bssid": "44:D1:FA:7B:FB:38",
+						   "ssid": "wireless2.4G",
+						   "ssid_hide": "0",
+						   "encode": "1",
+						   "password": "12345678"
+					  },
+					  {
+						   "id": "1",
+						   "vlan_id": "1",
+						   "enable": "0",
+						   "bssid": "44:D1:FA:7B:FB:38",
+						   "ssid": "wireless2.4G",
+						   "ssid_hide": "0",
+						   "encode": "1",
+						   "password": "12345678"
+					  },
+					  {
+						   "id": "2",
+						   "vlan_id": "2",
+						   "enable": "0",
+						   "bssid": "44:D1:FA:7B:FB:38",
+						   "ssid": "wireless2.4G",
+						   "ssid_hide": "0",
+						   "encode": "1",
+						   "password": "12345678"
+					  },
+					  {
+						   "id": "3",
+						   "vlan_id": "3",
+						   "enable": "0",
+						   "bssid": "44:D1:FA:7B:FB:38",
+						   "ssid": "wireless2.4G",
+						   "ssid_hide": "0",
+						   "encode": "1",
+						   "password": "12345678"
+					  }
+				 ],
+				 "timer": {
+					  "enable": "0",
+					  "start": "1",
+					  "end": "2"
+				 }
+			},
+			"errorCode": []
+	   	}
+	},
+	setWifi:res=>{
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   }
+	},
+	transgroup:res=>{
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   }
+	},
+	setwifis:res=>{
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   }
+	},
 }

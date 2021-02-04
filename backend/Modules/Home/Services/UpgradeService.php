@@ -284,7 +284,7 @@ class UpgradeService extends DeviceBaseService{
 		}
 		//发命令	
 		if(!sendToMqtt($topics,$command)){
-			throw new \Exception($e->getMessage(),config("exceptions.MQTT_PUBLISH_ERROR"));
+			throw new \Exception("Mqtt publish failure",config("exceptions.MQTT_PUBLISH_ERROR"));
 		}
 		$this->afterOperater($afterDatas);
 		return [];

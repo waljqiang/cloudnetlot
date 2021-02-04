@@ -147,7 +147,7 @@ module.exports = {
     send_test_email:'发送测试邮件',
     backup_data:'数据备份',
     backup:'备份',
-    apply_config:'应用设置',
+    apply_config:'应用',
     dev_rurn_group:'设备转组',
     dev_reboot:'重启设备',
     dev_ref:'刷新设备',
@@ -398,7 +398,7 @@ module.exports = {
     no_select_online_dev:'不能选择在线的设备进行删除',
     confirm_select_dev_del:'确认要删除当前所选择的设备吗?',
     is_online_dev_nodel:'存在在线设备，无法删除',
-    group_dev_top_tips:'设备转组会影响网络拓扑图的结构，确定要将所选择的设备转移到当前项目吗?',
+    group_dev_top_tips:'设备转组会影响网络拓扑图的结构，确定要将所选择的设备转移到当前工作组吗?',
     ref_success:'刷新成功',
     ref_error:'刷新失败',
     topo_add_dev_err:'设备添加失败',
@@ -542,6 +542,11 @@ module.exports = {
     "address_no_empty":"地址不能为空",
     "account_format_error":"账号格式不正确",
     "pwd_format_error":"密码格式不正确",
+    "vlan_message":"VLAN-ID范围（1-4094)",
+    "ssid_not_empty":"WiFi名称不能为空",
+    "ssid_max_tip":"WiFi名称超出最大输入长度",
+    "collect_wep_key":"Wep 密码长度错误"
+    
   },
   text:{
     "agreement1":"CloudNetLot服务条款",

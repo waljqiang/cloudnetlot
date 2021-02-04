@@ -53,6 +53,7 @@ Route::group(["prefix" => "oplog","middleware" => ["cloudnetlot","auth:cloudnetl
 	Route::post("list","OplogController@getList")->middleware("hash-encode:list.*.id#list.*.user_id");//获取操作日志列表
 	Route::get("info","OplogController@getInfo")->middleware("hash-decode:id")->middleware("hash-encode:id#user_id");//获取操作日志详情
 	Route::post("readed","OplogController@readedMessage")->middleware("hash-decode:ids");//置消息为已读
+	Route::post("exec","OplogController@exec")->middleware("hash-decode:id");//从新执行命令
 });
 
 //设备相关

@@ -371,6 +371,7 @@ CREATE TABLE `cloudnetlot_command` (
   `dev_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备名称',
   `dev_version` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '固件版本',
   `dev_type` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备型号',
+  `retry` tinyint(4) NOT NULL DEFAULT '1' COMMENT '下发次数',
   `is_del` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '删除标志位,0:没有删除,1:已经删除',
   `created_at` bigint(13) unsigned DEFAULT NULL COMMENT '创建时间',
   `updated_at` bigint(13) unsigned DEFAULT NULL COMMENT '更新时间',

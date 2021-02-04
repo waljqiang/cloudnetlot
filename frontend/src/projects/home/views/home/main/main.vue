@@ -40,7 +40,7 @@
                         </el-col>
                         <el-col class="align_c middle_inner"  :span="2">
                             <p>
-                                <span class="blue_font">2</span>
+                                <span class="blue_font">0</span>
                                 <br>
                                 <span>巡检报告</span>
                             </p>
@@ -50,7 +50,7 @@
                         </el-col>
                         <el-col class="align_c middle_inner" :span="2">
                             <p>
-                                <span class="red_font">2</span>
+                                <span class="red_font">0</span>
                                 <br>
                                 <span>故障设备</span>
                             </p>
@@ -60,7 +60,7 @@
                         </el-col>
                         <el-col class="align_c middle_inner"  :span="2">
                             <p>
-                                <span class="blue_font">2</span>
+                                <span class="blue_font">0</span>
                                 <br>
                                 <span>可升级设备</span>
                             </p>
@@ -134,7 +134,9 @@
                                             <span v-text="activity.dev_mac"></span>
                                         </el-form-item>
                                         <el-form-item label="操作描述">
-                                            <span v-text="activity.nickname"></span>
+                                            <span >
+                                                {{typeArr[activity.type-1]}}
+                                            </span>
                                         </el-form-item>
                                         <el-form-item label="时间">
                                             <span v-text="activity.created_at"></span>
@@ -228,7 +230,6 @@ import { CanvasRenderer } from 'echarts/renderers';
 echarts.use(
     [ TooltipComponent, GridComponent, PieChart, CanvasRenderer,LegendComponent,LineChart]
 );
-
 var myPieChart;
 var myLineChart;
 export default {
@@ -242,7 +243,7 @@ export default {
                 {"name":this.$t('device.dev_mac'),"width":"18%","type":"","align":"center","prop":"dev_mac","sortable":false,},
                 {"name":this.$t('device.dev_ip'),"width":"17%","type":"","align":"center","prop":"dev_ip","sortable":false}, 
                 {"name":this.$t('device.dev_name'),"width":"12%","type":"","align":"center","prop":"name_txt","sortable":false},    
-                {"name":this.$t('device.dev_type'),"width":"12%","type":"","align":"center","prop":"prt_size","sortable":false},
+                {"name":this.$t('device.dev_type'),"width":"12%","type":"","align":"center","prop":"type","sortable":false},
                 {"name":this.$t('device.dev_mode'),"width":"11%","type":"","align":"center","prop":"mode_txt","sortable":false},
                 {"name":this.$t('device.dev_version'),"width":"15%","type":"","align":"center","prop":"ver_txt","sortable":false},
                 {"name":this.$t('device.dev_access_time'),"width":"15%","type":"","align":"center","prop":"time_txt","sortable":false}
@@ -259,6 +260,7 @@ export default {
             check_data:[],  //表格选中的数据
             search_data:"",
 
+            typeArr : ['','修改设备系统信息','修改设备网络信息','修改设备无线信息','修改设备终端信息','重启设备','升级设备','绑定设备','','上报信息'],
             activities: [],
             lineTimeList:[
                 {
@@ -349,7 +351,6 @@ export default {
         },
         getDevList(){
             let getData = {
-                'status':"1",
                 'pageIndex':'1',
                 'pageOffset':'10',
                 'sortkey':'join_time',
@@ -376,7 +377,7 @@ export default {
             for(var i=0;i<data.length;i++){
                 data[i]['istruedata'] = true;
                 let modeTxt = ['网关','中继','WISP','WDS','AP']
-                data[i].mode_txt = modeTxt[Number(data[i].mode)+1];
+                data[i].mode_txt = modeTxt[Number(data[i].mode)-1];
                 data[i].name_txt = '<div class="txt_el" title="'+data[i].name+'" >'+data[i].name+'</div>';
                 data[i].ver_txt = '<div class="txt_el" title="'+data[i].version+'" >'+data[i].version+'</div>';
                 data[i].time_txt = '<div class="txt_el" title="'+data[i].join_time+'">'+data[i].join_time+'</div>';
@@ -560,7 +561,7 @@ export default {
         },
         getLogList(){
             let getData = {
-                status:3,
+                status:0,
                 pageIndex:1,
                 pageOffset:2,
                 sortkey:'created_at',

@@ -65,6 +65,9 @@
 }
 .el-dropdown-menu--small .el-dropdown-menu__item {font-size: 12px;}
 .el-drawer__header {padding: 3px 10px 0 10px; margin-bottom:0px}
+.th_select .el-input--mini .el-input__inner {border: none; text-align: center;  height: 20px; line-height: 20px;}
+.th_put .el-input__inner { text-align: center;  height: 20px; line-height: 20px;}
+.el-input__suffix {color: #C0C4CC;}
 //暂时性解决diolag 问题 https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
   transform: none;
@@ -74,4 +77,4 @@
   border-radius: 7px;
 }
 .el-dialog__header { padding: 0 10px; height: 40px; line-height: 40px; margin-bottom: 0px;}
-.el-dialog__body { padding: 0px 20px 50px 20px; font-size: 12px;}
+.el-dialog__body { padding: 0px 20px 10px 20px; font-size: 12px;}

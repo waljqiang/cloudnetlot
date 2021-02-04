@@ -689,7 +689,7 @@ const checkObj = {
         var ret = checkObj.check_int(str);
         if (true != ret)
             return ret;
-        if (parseInt(str, 10) > 2347 || parseInt(str, 10) < 0) {
+        if (parseInt(str, 10) > 2347 || parseInt(str, 10) < 1) {
             var ss = "rts";
             return ss;
         }
@@ -709,7 +709,7 @@ const checkObj = {
         var ret = checkObj.check_int(str);
         if (true != ret)
             return ret;
-        if (parseInt(str, 10) > 1024 || parseInt(str, 10) < 100) {
+        if (parseInt(str, 10) > 1024 || parseInt(str, 10) < 50) {
             var ss = "beacon";
             return ss;
         }
@@ -734,9 +734,9 @@ const checkObj = {
     },
     check_apthreshold(str){
         if((str == "") || (str.length > 3)
-            || isNaN(parseInt_dec(str))
-            || (parseInt_dec(str) < -95) 
-            ||(parseInt_dec(str) >-65))
+            || isNaN(parseInt(str))
+            || (parseInt(str) < -95) 
+            ||(parseInt(str) >-65))
         {
             var ss = "apthreshold";
             return ss;
@@ -758,6 +758,51 @@ const checkObj = {
         if (str == "" || str == null) {        
             return "address_no_empty";
         }
+        return true;
+    },
+    check_vlan(str) {
+        if (str == "" || str == null) {        
+            return "vlan_message";
+        }
+        if(parseInt(str, 10)!=0){
+            if (parseInt(str, 10) > 4094 || parseInt(str, 10) < 3) {
+                var ss = 'vlan_message';
+                return ss;
+            }
+        }
+        return true;
+    },
+    check_ssid(str) {
+        str = str.trim();
+        if (str == "" || str == null) {
+            var ss = "ssid_not_empty";
+            return ss;
+        }
+        var i, sum, count;
+        count = str.length;
+        sum = 0;
+        for (i = 0; i < count; i++) {
+            if ((str.charCodeAt(i) >= 0) && (str.charCodeAt(i) <= 255)) {
+                sum = sum + 1;
+            }else{
+                sum = sum + 3;
+            }
+            if (sum > 32) {
+                var ss = "ssid_max_tip";
+                return ss;
+            }
+        }
+        return true;
+    },
+    wepkey(str) {
+        str = str.trim();
+        var ss = "collect_wep_key";
+        if (str == "" || str == null) {
+            var ss = "pwd_not_empty";
+            return ss;
+        }
+        if (str.length != 5 && str.length != 13)
+            return ss;
         return true;
     },
 }
