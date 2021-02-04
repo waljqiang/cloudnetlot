@@ -60,9 +60,15 @@ class HashidsEncode{
         //最后为数字索引数组
         if("*" == $currentKey){
             $currentArr = $array;
-            $array = array_map(function($value){
-                return $this->hashids->encodeHash($value);
-            },$currentArr);
+            if($currentArr instanceof Collection){
+                $array = $currentArr->map(function($value){
+                    return $this->hashids->encodeHash($value);
+                });
+            }else{
+                $array = array_map(function($value){
+                    return $this->hashids->encodeHash($value);
+                },$currentArr);
+            }
         }
         if(isset($array[$currentKey])){
             $array[$currentKey] = $this->hashids->encodeHash($array[$currentKey]);

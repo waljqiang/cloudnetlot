@@ -50,7 +50,7 @@ const user = {
 			return new Promise((resolve, reject) => {
 				getUserInfo().then(response => {
 					if(response.status==10000){
-						commit('SET_PRIMARY', response.is_primary);
+						commit('SET_PRIMARY', response.data.level);
 						commit('SET_INFOS', response);          
 						resolve(response)
 					}else{

@@ -25,4 +25,16 @@ class Workgroup extends Model{
     public function users(){
         return $this->belongsToMany(User::class,"user_group","group_id","user_id");
     }
+
+    public function childs(){
+        return $this->hasMany(Workgroup::class,"pid","id");
+    }
+
+    public function parent(){
+        return $this->belongsTo(Workgroup::class,"pid","id");
+    }
+
+    public function devices(){
+        return $this->hasMany(Device::class,"group_id","id");
+    }
 }

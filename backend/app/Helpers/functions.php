@@ -1,6 +1,7 @@
 <?php
 use Carbon\Carbon;
 
+//生成随机字符串
 function getStr($len = 6,$source = '0123456789'){
     $str = '';
     for($i = 0; $i < $len; $i++){
@@ -95,17 +96,36 @@ function rankSort($items,$id='id',$pid='pid',$sub='sub',$order='id',$sort=SORT_A
     return $res;
 }
 
-function getCommID($lotType,$commType,$time = ""){
-    return !empty($time) ? strtoupper(str_pad(dechex($lotType),4,"0",STR_PAD_LEFT) . str_pad(dechex($commType),4,"0",STR_PAD_LEFT) . $time) : strtoupper(str_pad(dechex($lotType),4,"0",STR_PAD_LEFT) . str_pad(dechex($commType),4,"0",STR_PAD_LEFT) . time());
+//生成协议类型
+function getLotType($value){
+    return strtoupper(str_pad(dechex($value),4,"0",STR_PAD_LEFT));
 }
-
+//生成信息类型
+function getCommType($value){
+    return strtoupper(str_pad(dechex($value),4,"0",STR_PAD_LEFT));
+}
+//生成命令ID
+function getCommID($lotType,$commType,$time = ""){
+    return !empty($time) ? getLotType($lotType) . getCommType($commType) . $time . getStr(4) : getLotType($lotType) . getCommType($commType) . time() . getStr(4);
+}
+//生成命令
+function getCommand($commType,$body,$timestamp = "",$commID = ""){
+    $timestamp = empty($timestamp) ? (string) time() : (string) $timestamp;
+    if(empty($commID)){
+        $body = array_merge(["comm_id" => getCommID(config("yunlot.lottype.down"),$commType,$timestamp)],$body);
+    }else{
+        $body = array_merge(["comm_id" => $commID],$body);
+    }
+    return app("yunlot")->init()->setHeader(["type" => config("yunlot.lottype.down")])->setBody($body)->setNow($timestamp)->out();
+}
+//生成产品ID
 function generatePrtid($userID){
     $time = time();
     $userIDLength = str_pad(strlen($userID),2,0,STR_PAD_LEFT);
     $str = $userID . $time . getStr(4) . $userIDLength;
     return app("Hashprtids")->encodeHash($str);
 }
-
+//解析产品ID
 function decodePrtID($encrypt){
     $prtIDArr = app("Hashprtids")->decodeHash($encrypt);
     if(count($prtIDArr) != 1){
@@ -114,7 +134,7 @@ function decodePrtID($encrypt){
     $userIDLength = intval(substr($prtIDArr[0],-2));
     return [substr($prtIDArr[0],0,$userIDLength)];
 }
-
+//生成客户端ID
 function generateClitid($userID,$productID,$mac,$time = ""){
     $time = empty($time) ? time() : $time;
     $macdec = hexdec(parseMac($mac));
@@ -124,7 +144,7 @@ function generateClitid($userID,$productID,$mac,$time = ""){
     $str = $userID . $productID . $macdec . $time . $userIDLength . $productIDLength . $macdecLength;
     return app("Hashcltids")->encodeHash($str);
 }
-
+//解析客户端ID
 function decodeCltID($encrypt){
     $cltIDArr = app("Hashcltids")->decodeHash($encrypt);
     if(count($cltIDArr) != 1){
@@ -139,7 +159,7 @@ function decodeCltID($encrypt){
         strtoupper(setMac(dechex(substr($cltIDArr[0],($userIDLength+$productIDLength),$macdecLength))))//mac地址
     ];
 }
-
+//生成绑定码
 function getBindCode($userID,$mac,$gid){
     $time = time();
     $result = "";
@@ -153,7 +173,7 @@ function getBindCode($userID,$mac,$gid){
     }
     return base64_encode($result);
 }
-
+//解析绑定码
 function parseBindCode($bind,$key){
     try{
         $result = "";
@@ -174,7 +194,11 @@ function parseBindCode($bind,$key){
         throw new \Exception("The bind code is error",config("exceptions.BINDCODE_ERROR"));
     }
 }
-
+//生成topic
+function getTopic($prtid,$cltid){
+    return sprintf(str_replace("+","%s",config("mqtt.topic.devicedown")),$prtid,$cltid);
+}
+//发送mqtt消息
 function sendToMqtt($topics,$message,$qos=0,$retain=0,$callBack = NULL,$isAsync = true,&$msgID = Null){
     try{
         $isAsync ? app("mqtt")->publishAsync($topics,$message,$qos,$retain,$callBack,$msgID) : app("mqtt")->publishSync($topics,$message,$qos,$retain,$msgID);
@@ -185,14 +209,17 @@ function sendToMqtt($topics,$message,$qos=0,$retain=0,$callBack = NULL,$isAsync 
     }
 }
 
-function getTopic($prtid,$cltid){
-    return sprintf(str_replace("+","%s",config("mqtt.topic.devicedown")),$prtid,$cltid);
+function getVersion($name){
+    $arr = explode("-", $name);
+    $str = $arr[count($arr) - 2];
+    $str = substr($str, 5);
+    return $str;
 }
 
-function getCommand($commType,$body,$timestamp = "",$commID = ""){
-    $timestamp = empty($timestamp) ? time() : $timestamp;
-    if(empty($commID)){
-        $body = array_merge(["comm_id" => getCommID(config("yunlot.lottype.down"),$commType,$timestamp)],$body);
-    }
-    return app("yunlot")->init()->setHeader(["type" => config("yunlot.lottype.down")])->setBody($body)->setNow($timestamp)->out();
+function generateFid(){
+    return Carbon::now()->timestamp . getStr(10);
+}
+
+function generateOrderid(){
+    return "po" . Carbon::now()->timestamp . getStr(8);
 }

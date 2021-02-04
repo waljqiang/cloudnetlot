@@ -14,7 +14,7 @@ class Admin extends UserBase implements JWTSubject{
      * @var array
      */
     protected $fillable = [
-        'username','password', 'email','phonecode','phone','remember_token','is_del','created_at','updated_at'
+        'username','password', 'email','phonecode','phone','remember_token','status','created_at','updated_at'
     ];
 
     /**
@@ -23,7 +23,7 @@ class Admin extends UserBase implements JWTSubject{
      * @var array
      */
     protected $hidden = [
-        'password','remember_token','is_del'
+        'password','remember_token'
     ];
 
     protected $dateFormat = 'U';

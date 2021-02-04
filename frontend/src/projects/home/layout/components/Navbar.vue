@@ -44,7 +44,7 @@ import userCenter_img_hover from '@/projects/home/assets/common/usercenter_ico_h
 import msg_img_hover from '@/projects/home/assets/common/msg_ico_hover.png'
 import help_img_hover from '@/projects/home/assets/common/help_ico_hover.png'
 
-import img_logo from "@/projects/home/assets/login/logo.png"
+import img_logo from "@/projects/home/assets/common/logo.png"
 
 let imgObj = {
       logout_img:logout_img,
@@ -80,6 +80,7 @@ export default {
 	},
 
 	mounted(){
+		return;
 		let _this = this;
 		// 如果服务端不在本机，请把127.0.0.1改成服务端ip
 		var socket = io("http://"+window.location.hostname+":7777");

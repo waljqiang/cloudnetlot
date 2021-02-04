@@ -67,6 +67,7 @@ a:hover {
     height: 0;
   }
 }
+button {outline: none;}
 .cur{cursor: pointer;}
 .frt { float:right;}
 .flt { float:left;}
@@ -87,6 +88,7 @@ a:hover {
 .p10 {padding: 10px;}
 .jz {margin: 0 auto;}
 .va { vertical-align: middle;}
+.txt_el {width: 100%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
 #main_scrol>.el-scrollbar__wrap,#window_scrol>.el-scrollbar__wrap {
 	overflow-x: hidden;
 }
@@ -96,6 +98,8 @@ a:hover {
 .light_gray_bg{ background-color:$light_gray_bg;}
 .light_gray_font{ color:$light_gray_font;}
 .light_gray_border{ border-color: $light_gray_border;}
+.white_bg {background-color:$white_bg;}
+.green_font {color: $green_font;}
 
 .out_header {
   width: 100%;
@@ -116,7 +120,7 @@ a:hover {
 }
 
 .menu_box {
-  width:64px; min-height: 500px; height:auto; position:relative; background: $blue_bg;
+  width:60px; min-height: 500px; height:auto; position:relative; background: $blue_bg;
 }
 .sidebar_box {
     position: absolute;
@@ -131,7 +135,7 @@ a:hover {
 .navbar_menu img { vertical-align: middle;}
 .navbar_menu:hover {background: $blue_btn_bg;}
 
-.content_box { width:calc(100% - 64px);min-height: calc(100vh - 60px); background: $light_gray_bg; padding: 20px;}
+.content_box { width:calc(100% - 60px);min-height: calc(100vh - 60px); background: $light_gray_bg; padding: 20px;}
 .app-main {
     min-height: calc(100vh - 120px);
     /*50 = navbar  */
@@ -142,18 +146,24 @@ a:hover {
 }
 .login_main { width:100%; height: calc(100vh - 70px); background-size: cover; padding: 0;} 
 .tit_ico { width: 5px; height: 14px; display: inline-block; background: $blue_bg; border-radius: 6px; margin-right: 5px; vertical-align: sub;}
-.login_footer {width: 100%; line-height: 50px; text-align: center; color: $white_font; position: absolute; bottom: 20px; left: 0; border-radius: 5px;}
-.custom_close {width: 30px; height: 30px; line-height: 35px; margin-top: 5px; cursor: pointer;}
+.login_footer {width: 100%; line-height: 50px; text-align: center; color: $white_font; position: absolute; bottom: 20px; left: 0;}
+.custom_close {width: 30px; height: 30px; line-height: 35px; margin-top: 5px; cursor: pointer;  border-radius: 5px;}
 .custom_close:hover { background-color: $red_font_hover; color: $white_font;}
 .custom_close i {font-size: 16px; font-weight: bolder;}
+.upload-cur .el-upload { width: 100%;}
+#conf_tabs .el-tabs__item.is-active{
+  box-shadow: none;
+}
 /*table*/
-.table_box { width: 84%; }
+.table_box { width: 84%;  }
+.el-table { border-width: 1px 1px 0 1px;border-style: solid; border-color:$light_gray_border;}
+.el-table tr:last-child td{ border-bottom: 0px;}
 .tableAlign { text-align: right; height: 30px; margin: 10px 20px 5px 20px;}
 .tableAlign > .el-pagination__total { float: left;}
 .dom_off > .cell { display: none;}
 .custom-tree-node { line-height: 30px; width:100%;clear:both}
 
-.table_header {background:$light_gray_bg}
+.table_header {background:$light_gray_bg; height: 35px;}
 .table_header th {background:$light_gray_bg;}
 .table_header th .cell { font-weight:300; color: $black_font;}
 

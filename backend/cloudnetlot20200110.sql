@@ -29,7 +29,7 @@ CREATE TABLE `cloudnetlot_admin`  (
   `phonecode` varchar(255) NOT NULL COMMENT '国家区域码',
   `phone` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '管理员手机号',
   `remember_token` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `is_del` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除标志位,0:没有删除,1:已经删除',
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '账号状态,0:禁用,1:启用',
   `created_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '创建时间',
   `updated_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -159,7 +159,7 @@ CREATE TABLE `cnl_group` (
   `name` varchar(100) DEFAULT NULL COMMENT '分组中文名称',
   `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
   `config_id` varchar(50) NOT NULL DEFAULT '' COMMENT '配置模板ID,空为未配置模板',
-  `auto` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否自动应用配置',
+  `auto` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:未应用,1:手动应用,2:自动应用',
   `level` tinyint(4) NOT NULL DEFAULT '0' COMMENT '深度',
   `is_del` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '删除标志位,0:没有删除,1:已经删除',
   `created_at` bigint(13) unsigned DEFAULT NULL COMMENT '创建时间',
@@ -187,17 +187,31 @@ CREATE TABLE `cloudnetlot_user_group` (
 DROP TABLE IF EXISTS `cloudnetlot_package`;
 CREATE TABLE `cloudnetlot_package`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `fid` varchar(50) NOT NULL COMMENT '文件ID',
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '固件名称',
   `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '固件地址',
   `version` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '固件版本',
   `user_id` bigint(20) NOT NULL COMMENT '上传固件用户ID',
   `file_md5` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '固件md5值',
-  `eqtype` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '设备型号',
-  `is_del` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除标志位,0:没有删除,1:已经删除',
+  `is_local` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否是本地上传,0:不是,1:是',
+  `size` bigint(20) UNSIGNED NOT NULL COMMENT '固件包大小,单位B',
+  `downloads` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '下载次数',
   `created_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '创建时间',
   `updated_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '固件升级包表' ROW_FORMAT = Compact;
+-- ----------------------------
+-- Table structure for cloudnetlot_package_type
+-- ----------------------------
+DROP TABLE IF EXISTS `cloudnetlot_package_type`;
+CREATE TABLE `cloudnetlot_package_type`  (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `fid` varchar(50) NOT NULL COMMENT '文件ID',
+  `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '适应型号',
+  `created_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '创建时间',
+  `updated_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '升级包适配型号' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for cloudnetlot_tpl_info
@@ -225,12 +239,14 @@ CREATE TABLE `cloudnetlot_upgrade_order`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `orderid` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '升级单号',
   `user_id` bigint(20) UNSIGNED NOT NULL COMMENT '用户id',
-  `eqtype` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '设备型号',
   `package_id` bigint(20) UNSIGNED NOT NULL COMMENT '固件包ID',
   `package_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '固件名称',
   `package_md5` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '文件md5值',
   `package_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '文件地址',
+  `version` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '固件版本',
   `is_del` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除标志位,0:没有删除,1:已经删除',
+  `exec_time` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '执行时间',
+  `status` tinyint(4) UNSIGNED NOT NULL DEFAULT 0 COMMENT '状态0:待升级1:升级中2:失败3:成功',
   `created_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '创建时间',
   `updated_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
@@ -246,7 +262,9 @@ CREATE TABLE `cloudnetlot_upgrade_order_dev`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `orderid` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '升级单号',
   `dev_mac` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '设备MAC',
-  `status` tinyint(4) UNSIGNED NOT NULL DEFAULT 0 COMMENT '状态0:未开始,1:下载中,2:下载完成,3:升级中,4:升级完成',
+  `dev_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备名称',
+  `type` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '设备型号',
+  `status` tinyint(4) UNSIGNED NOT NULL DEFAULT 0 COMMENT '状态0:待升级1:升级中2:失败3:成功',
   `is_del` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除标志位,0:没有删除,1:已经删除',
   `created_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '创建时间',
   `updated_at` bigint(13) UNSIGNED NULL DEFAULT NULL COMMENT '更新时间',
@@ -463,5 +481,58 @@ CREATE TABLE `cloudnetlot_develop_acl` (
   `updated_at` bigint(13) UNSIGNED DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='MQTT acl表';
+
+-- ----------------------------
+-- Table structure for cloudnetlot_device_relation
+-- ----------------------------
+DROP TABLE IF EXISTS `cloudnetlot_device_relation`;
+CREATE TABLE `cloudnetlot_device_relation` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` bigint(20) UNSIGNED NOT NULL COMMENT '用户ID',
+  `mac` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备MAC',
+  `pid` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '父设备MAC',
+  `content` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '相关信息',
+  `created_at` bigint(13) UNSIGNED DEFAULT NULL COMMENT '创建时间',
+  `updated_at` bigint(13) UNSIGNED DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `device_relation_mac_unique` (`mac`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='设备层级关系表';
+
+-- ----------------------------
+-- Table structure for cloudnetlot_topgraphy
+-- ----------------------------
+DROP TABLE IF EXISTS `cloudnetlot_topgraphy`;
+CREATE TABLE `cloudnetlot_topgraphy` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` bigint(20) UNSIGNED NOT NULL COMMENT '用户ID',
+  `mac` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '设备MAC',
+  `pid` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '父设备MAC',
+  `content` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '相关信息',
+  `is_edit` tinyint(1) UNSIGNED DEFAULT 0 COMMENT '是否编辑过0:未编辑1:已编辑',
+  `is_virture` tinyint(1) UNSIGNED DEFAULT 0 COMMENT '是否是虚拟设备1:是0:否',
+  `point_x` int(11) NOT NULL DEFAULT '-1' COMMENT '拓扑图上横坐标',
+  `point_y` int(11) NOT NULL DEFAULT '-1' COMMENT '拓扑图上纵坐标',
+  `group_id` int(11) NULL DEFAULT '0' COMMENT '工作组ID',
+  `created_at` bigint(13) UNSIGNED DEFAULT NULL COMMENT '创建时间',
+  `updated_at` bigint(13) UNSIGNED DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='拓扑图表';
+
+-- ----------------------------
+-- Table structure for cloudnetlot_device_virture
+-- ----------------------------
+DROP TABLE IF EXISTS `cloudnetlot_device_virture`;
+CREATE TABLE `cloudnetlot_device_virture` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` bigint(20) UNSIGNED NOT NULL COMMENT '用户ID',
+  `mac` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '0' COMMENT '虚拟设备ID',
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '虚拟设备名称',
+  `mode` int(4) UNSIGNED NOT NULL COMMENT '虚拟设备工作模式,100：网络根节点,101:交换机,102:摄像头,103:移动设备,104：PC',
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '虚拟设备状态0:离线1:在线2:未知',
+  `group_id` int(11) NOT NULL DEFAULT '1' COMMENT '工作组ID',
+  `created_at` bigint(13) UNSIGNED DEFAULT NULL COMMENT '创建时间',
+  `updated_at` bigint(13) UNSIGNED DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='虚拟设备表';
 
 SET FOREIGN_KEY_CHECKS = 1;

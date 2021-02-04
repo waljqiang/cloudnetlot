@@ -21,6 +21,7 @@
                 <el-table-column v-else  :type="colObj.type" :key="index" :align="colObj.align" :prop="colObj.sortData" :label="colObj.name" :min-width="colObj.width"  :sortable="colObj.sortable" :show-overflow-tooltip="false" >
                     <template   slot-scope="scope">
                         <div v-html="scope.row[colObj.prop]" ></div>
+                        
                     </template>
                 </el-table-column>
             </template>
@@ -47,7 +48,7 @@ export default {
     data: function data() {
         return {
             tableData: [],
-            tableH: this.tableheight ? this.tableheight : (this.pageoffset) * 25 +35,
+            tableH: this.tableheight ? this.tableheight : (this.pageoffset) * 25 +37,
             isrowcurrent:this.rowcurrent ? true:false,
             getRowKeys: function(row){
                 return row.m_sn;
@@ -121,7 +122,6 @@ export default {
         
         },
         handleSelectionChange: function(val) {
-            console.log(val)
             //checkbox 变化
            this.$emit("listenCheckData",val)
         },
@@ -154,9 +154,12 @@ export default {
                 if(this.total-i>0&&item){
                     this.tableData.push(this.thisdata[i])
                 }else{
-                    if(this.ispage){
-                        this.tableData.push({ istruedata: false });
-                    }
+                  //  if(this.ispage){
+                        if(i<globalPageOffset){
+                            this.tableData.push({ istruedata: false });
+                        }
+                        
+                  //  }
                 }
             }
            // this.toggleSelection(this.tableData);

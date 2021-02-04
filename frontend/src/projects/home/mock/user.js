@@ -1,29 +1,31 @@
 export default {
 	userinfo: res => {
 		return {
-			"status": 10000,
-			"data": {
-				"uid": "cnlypawyozqpverlbwjknbmdxagn",
-				"username": "waljqiang",
-				"nickname": "万年路口",
-				"pid": "cnlypxmdenbwgzkjyejyqxpvraob",
-				"is_primary": false,
-				"email": "1454968008@qq.com",
-				"phonecode": "86",
-				"phone": "13468826446",
-				"level": 1,
-				"area": 0,
-				"address": "锦业路",
-				"longitude": "",
-				"latitude": "",
-				"status": 1,
-				"admin_id": "cnlwmnaxqkpembgjvmlyonzvrwdz",
-				"timeZone": "+08:00",
-				"isSummerTime": 0,
-				"created_at": "2020-06-22 14:26:19",
-				"updated_at": "2020-06-23 11:13:49"
+			"status":10000,
+			"data":{
+				"uid":"cnlapnvenbyqzwdlmxjmxgaoprkz",
+				"username":"test001",
+				"nickname":"lianglibo",
+				"pid":"cnlypxmdenbwgzkjyejyqxpvraob",
+				"is_primary":true,
+				"email":"303098530@qq.com",
+				"phonecode":"86",
+				"phone":"18792445299",
+				"level":3,
+				"area":0,
+				"address":"科技二路",
+				"longitude":"",
+				"latitude":"",
+				"status":1,
+				"admin_id":"cnlwmnaxqkpembgjvmlyonzvrwdz",
+				"timeZone":"+08:00",
+				"isSummerTime":0,
+				"created_at":"2021-01-13 13:56:14",
+				"updated_at":"2021-01-19 11:02:02"
 			},
-			"errorCode": [600000100]
+			"errorCode":[
+		
+			]
 		}
 	},
 	register: res => {
@@ -95,7 +97,7 @@ export default {
 						   "phonecode": "86",
 						   "phone": "13468826445",
 						   "level": 2,
-						   "status": 1,
+						   "status": 0,
 						   "created_at": "2020-06-29 16:10:36",
 						   "updated_at": "2020-06-29 16:10:36"
 					  },
@@ -108,12 +110,63 @@ export default {
 						   "phonecode": "86",
 						   "phone": "13468826445",
 						   "level": 2,
-						   "status": 1,
+						   "status": 0,
 						   "created_at": "2020-06-29 11:43:45",
 						   "updated_at": "2020-06-29 11:43:45"
 					  }
 				 ]
 			},
+			"errorCode": []
+	   	}
+	},
+	userAdd: res => {
+		return {
+			"status": 10000,
+			"data": {
+				 "uid": "cnlzrwmzexrpvkojdglynwqabgdq"
+			},
+			"errorCode": []
+	   }
+	},
+	childInfo: res => {
+		return {
+			"status": 10000,
+			"data": {
+				 "uid": "cnlpmxqgzaprmbvjqyjyoxkenwdo",
+				 "username": "waljqiang_1",
+				 "nickname": "修改子账号信息测试",
+				 "pid": "cnlngqzpqybvodrlxajemkwagnxy",
+				 "phonecode": "86",
+				 "phone": "13468826445",
+				 "email": "liuzq@yuncore.com.cn",
+				 "level": '1',
+				 "status": '1',
+				 "gids": [
+					  "cnlngqzpqybvodrlxajemkwagnxy"
+				 ],
+				 "created_at": "2021-01-15 13:49:35"
+			},
+			"errorCode": []
+	   	}
+	},
+	editBack: res => {
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   }
+	},
+	resetChildPwd: res => {
+		return {
+			"status": 10000,
+			"data": [],
+			"errorCode": []
+	   	}
+	},
+	delChild: res => {
+		return {
+			"status": 10000,
+			"data": [],
 			"errorCode": []
 	   	}
 	},

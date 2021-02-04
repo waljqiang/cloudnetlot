@@ -5,16 +5,16 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProductRequest extends FormRequest{
     private $rules = [
-        "product/list" => [
+        "list" => [
             "pageIndex" => "numeric",
             "pageOffset" => "numeric",
             "sortKey" => "in:name,type,size,aud_status,created_at",
             "sort" => "in:asc,desc"
         ],
-        "product/info" => [
+        "info" => [
             "prtid" => "required"
         ],
-        "product/approve" => [
+        "approve" => [
             "prtid" => "required",
             "enable" => "in:0,1",
             "lang" => "in:zh-cn,en-us"
@@ -29,7 +29,7 @@ class ProductRequest extends FormRequest{
         $rules = [];
         if(!empty($this->rules)){
             foreach ($this->rules as $action => $rule) {
-                $regex = "*" . $action;
+                $regex = "*/" . $action;
                 if($this->is($regex)){
                     $rules = $rule;
                     break;

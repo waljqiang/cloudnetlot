@@ -15,11 +15,12 @@ class AdminTableSeeder extends Seeder{
     	if(empty($res)){
 	        DB::connection()->table("admin")->insert([
 	        	[
-	        		"username" => "cloudnetlot",
+	        		"username" => config("public.default.admin"),
 	        		"password" => bcrypt(config("public.default.password")),
                     "email" => config("public.default.email"),
                     "phonecode" => config("public.default.phonecode"),
                     "phone" => config("public.default.phone"),
+                    "status" => 0,
 	        		"created_at" => $time,
 	        		"updated_at" => $time
 	        	]

@@ -28,4 +28,8 @@ class Client extends Model{
         return $this->belongsTo(Product::class,"prtid","prtid");
     }
 
+    public function device(){
+        return $this->hasOne(Device::class,"dev_mac","mac");
+    }
+
 }

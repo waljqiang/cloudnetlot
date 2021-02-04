@@ -40,11 +40,13 @@ class BaseRepository extends Repository{
 	}
 
 	public function save($data,$condition){
-		return $this->makeModel()->where($condition)->update($data);
+		$rs = $this->makeModel()->where($condition)->update($data);
+		return $rs !== false ? true : false;
 	}
 
 	public function delete($condition){
-		return $this->makeModel()->where($condition)->delete();
+		$rs = $this->makeModel()->where($condition)->delete();
+		return $rs !== false ? true : false;
 	}
 
 	public function getTable($name){

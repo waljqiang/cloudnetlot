@@ -305,7 +305,7 @@ module.exports = {
     project_error_in_device:'Binding devices exist in this project and cannot be deleted!',
     project_error_in_child:'There are sub-projects under this project, which can not be deleted!',
     project_error_in_role:'The project has been bound to the role and cannot be deleted!',
-    project_error_in_name:'The project name can only contain letters, numbers, Chinese, underscores, and underscores, and the length must be between 1 and 30 bits.',
+    project_error_in_name:'Working group names can only contain letters, numbers, Chinese, _, -, @, and must be between 1 and 10 digits in length.',
     project_error_in_level:'Item lists should not exceed level 5',
     pwd_set_error_tips:'Passwords can only contain letters, numbers, underscores, and underscores, and must be between 6 and 25 bits in length.',
     pwd_set_error_tips2:'Password cannot be empty',

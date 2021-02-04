@@ -103,5 +103,6 @@ class OpenClient extends Command
         $this->info('New client created successfully.');
         $this->line("<comment>client_id:{$hashids->encodeHash($client->id)}</comment>");
         $this->line("<comment>secret:{$client->secret}</comment>");
+        exit(-1);
     }
 }

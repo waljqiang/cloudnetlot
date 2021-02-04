@@ -121,7 +121,7 @@ export let constantRouterMap = [    //添加新一级路由需要修改 permissi
 						name:'sys_log',
 						path:'/maintain/log',
 						hidden: false,
-						component: () => import('../views/maintain/log/index'),
+						component: () => import('../views/maintain/log/operate/operate'),
 					}
 				]
 			},
@@ -129,6 +129,7 @@ export let constantRouterMap = [    //添加新一级路由需要修改 permissi
 				path: '/account',
 				meta: { title: 'account_management','icon': 'menu_account_ico'},
 				component: () => import('../views/account/user/list'),
+				only_primary:true,//是否只属于主账号可见
 				hidden: false,
 				children:[
 					{

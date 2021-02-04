@@ -5,6 +5,8 @@ import userAPI from './user'
 import systemAPI from './system'
 import logAPI from './log'
 import groupAPI from './workgroup'
+import proAPI from './product'
+import devAPI from './device'
 // Fix an issue with setting withCredentials = true, cross-domain request lost cookies
 // https://github.com/nuysoft/Mock/issues/300
 Mock.XHR.prototype.proxy_send = Mock.XHR.prototype.send
@@ -32,15 +34,33 @@ Mock.mock(/\/backend\/user\/password\/sendmail/, 'post', userAPI.sendEmail)
 Mock.mock(/\/backend\/user\/password\/reset/, 'post', userAPI.resetPwd)
 Mock.mock(/\/backend\/user\/child\/list/, 'post', userAPI.userList)
 Mock.mock(/\/backend\/user\/child\/count/, 'get', userAPI.userCount)
+Mock.mock(/\/backend\/user\/child\/add/, 'post', userAPI.userAdd)
+Mock.mock(/\/backend\/user\/child\/info/, 'get', userAPI.childInfo)
+Mock.mock(/\/backend\/user\/child\/save/, 'post', userAPI.editBack)
+Mock.mock(/\/backend\/user\/child\/resetspassword/, 'post', userAPI.resetChildPwd)
+Mock.mock(/\/backend\/user\/child\/deletes/, 'post', userAPI.delChild)
 
 //log
-Mock.mock(/\/backend\/oplog\/statics/, 'get', logAPI.statics)
+Mock.mock(/\/backend\/oplog\/statistics/, 'get', logAPI.statics)
 Mock.mock(/\/backend\/oplog\/list/, 'post', logAPI.list)
 Mock.mock(/\/backend\/oplog\/info/, 'get', logAPI.info)
 Mock.mock(/\/backend\/oplog\/readed/, 'post', logAPI.read)
 
 //groupAPI
 Mock.mock(/\/backend\/workgroup\/all/, 'get', groupAPI.all)
+Mock.mock(/\/backend\/workgroup\/info/, 'get', groupAPI.info)
+Mock.mock(/\/backend\/workgroup\/delete/, 'get', groupAPI.delete)
+Mock.mock(/\/backend\/workgroup\/add/, 'post', groupAPI.add)
+Mock.mock(/\/backend\/workgroup\/save/, 'post', groupAPI.save)
+
+//product
+Mock.mock(/\/backend\/product\/statisticswithdevices/, 'get', proAPI.statics)
+
+// device
+Mock.mock(/\/backend\/device\/list/, 'post', devAPI.list)
+Mock.mock(/\/backend\/device\/statistics\/clients\/onlines/, 'post', devAPI.userActivity)
+Mock.mock(/\/backend\/device\/statistics/, 'get', devAPI.statistics)
+Mock.mock(/\/backend\/device\/infos/, 'post', devAPI.infos)
 
 // system
 Mock.mock(/\/backend\/api\/system\/countrycode/, 'get', systemAPI.countrycode)

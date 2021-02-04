@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function oplogStatics(params) {
   return request({
-    url: 'backend/oplog/statics',
+    url: 'backend/oplog/statistics',
     method: 'get',
     params
   })

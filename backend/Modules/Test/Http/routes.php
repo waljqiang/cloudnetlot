@@ -12,4 +12,5 @@ Route::group(['middleware' => ['cloudnetlot'],'prefix' => 'test','namespace' => 
     Route::get('testlog','TestController@testLog');
     Route::get('testlua','TestController@testLua');
     Route::post('testhash','TestController@testHash')->middleware("hash-decode:a#f")->middleware("hash-encode:a#c.ca#d.*.da#f.*#g.*.*.ga");
+    Route::post('devices/online',"TestController@devicesOnline");
 });

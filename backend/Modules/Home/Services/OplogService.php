@@ -9,9 +9,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class OplogService extends BaseService{
-	private $commandRepository;
-	private $messageReadRepository;
-	private $cacheRepository;
+	protected $commandRepository;
+	protected $messageReadRepository;
+	protected $cacheRepository;
 
 	public function __construct(CommandRepository $commandRepository,MessageReadRepository $messageReadRepository,CacheRepository $cacheRepository){
 		$this->commandRepository = $commandRepository;
@@ -19,7 +19,7 @@ class OplogService extends BaseService{
 		$this->cacheRepository = $cacheRepository;
 	}
 
-	public function staticsNotices($user,$params){
+	public function statisticsNotices($user,$params){
 		$status = array_get($params,"status",0);
 		$conditions = [];
 		if($user->is_primary){//主账号

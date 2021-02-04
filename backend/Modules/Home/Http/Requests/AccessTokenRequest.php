@@ -5,11 +5,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class AccessTokenRequest extends FormRequest{
     private $rules = [
-    	"auth/token" => [
+    	"token" => [
     		"username" => "required|alpha_dash|between:3,20",
             "password" => "required|alpha_dash|between:6,20",
     	],
-        "auth/token/refresh" => [
+        "token/refresh" => [
             "refresh_token" => "required",
         ],
     ];

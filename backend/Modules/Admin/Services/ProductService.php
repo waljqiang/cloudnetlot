@@ -9,8 +9,8 @@ use Carbon\Carbon;
 use Mail;
 
 class ProductService extends BaseService{
-	private $productRepository;
-	private $cacheRepository;
+	protected $productRepository;
+	protected $cacheRepository;
 
 	public function __construct(ProductRepository $productRepository,CacheRepository $cacheRepository){
 		$this->productRepository = $productRepository;

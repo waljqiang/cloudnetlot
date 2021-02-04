@@ -23,7 +23,7 @@ class UserRequest extends FormRequest{
         $rules = [];
         if(!empty($this->rules)){
             foreach ($this->rules as $action => $rule) {
-                $regex = "*" . $action;
+                $regex = "*/" . $action;
                 if($this->is($regex)){
                     $rules = $rule;
                     break;

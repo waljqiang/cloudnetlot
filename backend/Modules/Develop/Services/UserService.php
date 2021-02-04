@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Mail;
 
 class UserService extends BaseService{
-	private $userRepository;
+	protected $userRepository;
 
 	public function __construct(UserRepository $userRepository){
 		$this->userRepository = $userRepository;

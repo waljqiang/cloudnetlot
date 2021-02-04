@@ -16,4 +16,21 @@ class DeviceRepository extends BaseRepository{
 		return isset($rs[0]) ? (array)$rs[0] : [];
 	}
 
+	public function saveDevicesName($deviceNames){
+		if(!empty($deviceNames)){
+			$binds = [];
+			$sql = "UPDATE " . $this->getTable("device") . " SET `name` = CASE `dev_mac` ";
+			foreach ($deviceNames as $key => $value) {
+				$sql .= "WHEN ? THEN ? ";
+				$binds = array_merge($binds,[$key,$value]);
+				//$sql .= sprintf("WHEN '%s' THEN '%s' ",$key,$value);
+			}
+			$sql .= "END WHERE `dev_mac` IN (" . implode(",",array_fill(0,count($deviceNames),"?")) . ")";
+			$binds = array_merge($binds,array_keys($deviceNames));
+			$rs = DB::update($sql,$binds);
+			return $rs !== false ? true : false;
+		}
+		return true;
+	}
+
 }

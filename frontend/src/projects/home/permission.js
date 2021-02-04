@@ -23,12 +23,12 @@ router.beforeEach((to, from, next) => {
 			}
 			if (!store.state.user.infos.data) {
 				store.dispatch('GetInfo').then(infoRes => { // 拉取用户信息
-					if(!infoRes.data.is_primary){//非主账号，删除账号管理路由
+					if(!infoRes.data.is_primary=='1'){//非主账号，删除账号管理路由
 						let routeArr = router.options.routes;	
 						for(var i=0;i<routeArr.length;i++){
 							if(routeArr[i].path=='/'){
 								for(var k=0;k<routeArr[i].children.length;k++){	
-									if(routeArr[i].children[k].is_primary){
+									if(routeArr[i].children[k].only_primary){
 										//routeArr[i].children.pop();
 										routeArr[i].children.splice(k,1);
 									}
@@ -51,7 +51,7 @@ router.beforeEach((to, from, next) => {
 		if(whiteList.indexOf(to.path) !== -1) {
 			next()
 		} else {
-			next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
+			next('/login?redirect=${to.path}') // 否则全部重定向到登录页
 			NProgress.done()
 		}
   	}

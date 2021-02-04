@@ -14,14 +14,33 @@ class CacheRepository{
 	const SYSTEM_CAPTCHA = 'system:captcha:';//验证码存储地址
 	const USER_EMAIL_STATUS = 'user:password:email:status:';//用户找回密码邮件链接是否使用
 	const OPLOG_NUM = "h:user:oplog:num:";//用户操作日志统计
+	const TOPGRAPHY = "topgraphy:";//拓扑图
 
 	public function setRegister($prtid,$mac,$data,$ttl=0){
-		return !empty($ttl) ? Redis::setex(self::REGISTER . $prtid . ":" . $mac,$ttl,json_encode($data)) :Redis::set(self::REGISTER . $prtid . ":" . $mac,json_encode($data));
+		return !empty($ttl) ? Redis::setex(self::REGISTER . $prtid . ":" . $mac,$ttl,json_encode($data)) : Redis::set(self::REGISTER . $prtid . ":" . $mac,json_encode($data));
 	}
 
 	public function getRegister($prtid,$mac){
 		$rs = Redis::get(self::REGISTER . $prtid . ":" . $mac);
 		return $rs ? json_decode($rs,true) : [];
+	}
+
+	/**
+	 * 功能描述
+	 *
+	 * @param  [type] $datas ["prtid" => "mac"]
+	 * @return [type]        [description]
+	 */
+	public function delRegister($datas){
+		if(!empty($datas)){
+			return Redis::pipeline(function($pipe)use($datas){
+				foreach ($datas as $prtid => $mac) {
+					$pipe->del(self::REGISTER . $prtid . ":" . $mac);
+				}
+			});
+			
+		}
+		return true;
 	}
 
 	public function clearRegisterByPrtid($prtid){
@@ -82,9 +101,18 @@ class CacheRepository{
 		return true;
 	}
 
+	public function setDevicesDynamics($datas){
+		Redis::pipeline(function($pipe) use ($datas){
+			foreach ($datas as $mac => $data) {
+				$pipe->hmset(self::DEVICE_DYNAMIC . $mac,$data);
+			}
+		});
+		return true;
+	}
+
 	public function getDeviceDynamic($mac){
 		$data = Redis::hgetall(self::DEVICE_DYNAMIC . $mac);
-		return !empty($data) && $data["status"] == config("device.status.online") ? $data : ["cpu_use" => "0","memory_use" => "0","runtime" => "0","status" => "0"];
+		return !empty($data) && isset($data["status"]) && $data["status"] == config("device.status.online") ? $data : ["cpu_use" => "0","memory_use" => "0","runtime" => "0","status" => "0","link" => "-1","rssi" => "-1"];
 	}
 
 	public function getDeviceDynamicWithField($mac,$field){
@@ -102,10 +130,32 @@ class CacheRepository{
 				}
 			});
 			foreach ($macs as $key => $mac) {
-				$res[$mac] = !empty($results[$key]) && $results[$key]["status"] == config("device.status.online") ? $results[$key] : ["cpu_use" => "0","memory_use" => "0","runtime" => "0","status" => "0"];
+				$res[$mac] = !empty($results[$key]) && isset($results[$key]["status"]) && $results[$key]["status"] == config("device.status.online") ? $results[$key] : ["cpu_use" => "0","memory_use" => "0","runtime" => "0","status" => "0","link" => "-1","rssi" => "-1"];
 			}
 		}
 		return $res;
+	}
+
+	public function delDevicesDynamics($macs){
+		return Redis::del($macs);
+	}
+
+	public function getTopgraphy($uid,$gid){
+		$rs = Redis::get(self::TOPGRAPHY . $uid . ":" . $gid);
+		return $rs ? json_decode($rs,true) : [];
+	}
+
+	public function setTopgraphy($uid,$gid,$datas,$ttl = ""){
+		return !empty($ttl) ? Redis::setex(self::TOPGRAPHY . $uid . ":" . $gid,$ttl,json_encode($datas)) : Redis::set(self::TOPGRAPHY . $uid . ":" . $gid,json_encode($datas));
+	}
+
+	public function deleteTopgraphy($uid,$gids){
+		if(!empty($gids)){
+			return Redis::pipeline(function($pipe)use($uid,$gids){
+				return $pipe->del(self::TOPGRAPHY . $uid . ":" . $gid);
+			});
+		}
+		return true;
 	}
 
 }

@@ -4,6 +4,7 @@ namespace Modules\Test\Services;
 use App\Services\BaseService;
 use Modules\Test\Repositories\DeviceRepository;
 use App\Repositories\CacheRepository;
+use Illuminate\Support\Facades\Redis;
 
 class TestService extends BaseService{
 	private $deviceRepository;
@@ -68,5 +69,28 @@ class TestService extends BaseService{
 			]
 		];
 		return $result;
+	}
+
+	public function devicesOnline($params){
+		$macs = array_get($params,"macs");
+		$res = [];
+		$dynamics = Redis::pipeline(function($pipe) use ($macs){
+			foreach ($macs as $mac) {
+				$key = CacheRepository::DEVICE_DYNAMIC . $mac;
+				$pipe->hgetall($key);
+			}
+		});
+		foreach ($dynamics as $key => $value) {
+			if(!empty($value)){
+				$res[] = $macs[$key];
+			}
+		}
+		if(!empty($res)){
+			$this->cacheRepository->setDevicesDynamic($res,["status" => config("device.status.online")]);
+		}
+		return [
+			"total" => count($res),
+			"list" => $res
+		];
 	}
 }

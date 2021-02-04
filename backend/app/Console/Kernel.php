@@ -15,6 +15,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\MsgPush::class,
         Commands\WmsgPush::class,
+        Commands\AdminActive::class,
+        Commands\AdminResetPassword::class,
     ];
 
     /**

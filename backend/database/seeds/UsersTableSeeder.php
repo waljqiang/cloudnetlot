@@ -45,7 +45,7 @@ class UsersTableSeeder extends Seeder
             if($userID && $develop){
                 DB::commit();
             }else{
-                DB::rollback();
+                DB::rollBack();
                 throw new \Exception("Failure",config("exceptions.MYSQL_EXEC_ERROR"));
             }
 	    }

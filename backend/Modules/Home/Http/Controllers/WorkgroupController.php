@@ -17,6 +17,11 @@ class WorkgroupController extends Controller{
 		return $workgroupService->getAll($request->user(),$request->all());
 	}
 
+	//配置模板下载
+	public function downloadConfig(Request $request,WorkgroupService $workgroupService){
+		return $workgroupService->downloadConfig($request->user(),$request->all());
+	}
+
 	//上传配置文件
 	public function uploadConfig(WorkgroupRequest $request,WorkgroupService $workgroupService){
 		return $workgroupService->uploadConfig($request->user(),$request->all());

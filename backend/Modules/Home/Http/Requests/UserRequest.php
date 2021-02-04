@@ -5,7 +5,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UserRequest extends FormRequest{
     private $rules = [
-    	"user/register" => [
+    	"register" => [
     		"username" => "required|alpha_dash|between:3,20|unique:users",
     		"nickname" => "regex:/^[\x{4e00}-\x{9fa5}a-zA-Z0-9_]{1,20}$/iuD",
     		"password" => "required|alpha_num|between:6,20|confirmed",
@@ -15,25 +15,25 @@ class UserRequest extends FormRequest{
     		"area" => "nullable|exists:area,code",
     		"address" => "required|max:100"
     	],
-        "user/password/sendmail" => [
+        "password/sendmail" => [
             "username" => "required|exists:users,username",
             "email" => "required|email",
             "lang" => "in:zh-cn,en-us"
         ],
-        "user/password/checkmail" => [
+        "password/checkmail" => [
             "content" => "required"
         ],
-        "user/password/reset" => [
+        "password/reset" => [
             "content" => "required",
             "password" => "required|alpha_num|between:6,20|confirmed"
         ],
-        "user/save" => [
+        "save" => [
             "nickname" => "required_without:phonecode,phone,email|regex:/^[\x{4e00}-\x{9fa5}a-zA-Z0-9_]{1,20}$/iuD",
             "phonecode" => "required_without:nickname,phone,email|required_with:phone|exists:country_code,phonecode",
             "phone" => "required_without:nickname,phonecode,email|required_with:phonecode|phone:phonecode",
             "email" => "required_without:nickname,phonecode,phone|email",
         ],
-        "user/password/save" => [
+        "password/save" => [
             "old_password" => "required",
             "new_password" => "required|alpha_num|between:6,20|different:old_password|confirmed"
         ],
@@ -44,6 +44,9 @@ class UserRequest extends FormRequest{
             "sort" => "in:asc,desc",
             "status" => "in:0,1,2",
             "role" => "nullable|in:1,2"
+        ],
+        "child/info" => [
+            "uid" => "required"
         ],
         "child/add" => [
             "username" => "required|alpha_dash|between:3,20|unique:users",
@@ -74,7 +77,7 @@ class UserRequest extends FormRequest{
         ],
         "child/deletes" => [
             "uids" => "required|array"
-        ],
+        ]
     ];
 	/**
      * Get the validation rules that apply to the request.
@@ -85,7 +88,7 @@ class UserRequest extends FormRequest{
         $rules = [];
         if(!empty($this->rules)){
             foreach ($this->rules as $action => $rule) {
-                $regex = "*" . $action;
+                $regex = "*/" . $action;
                 if($this->is($regex)){
                     $rules = $rule;
                     break;
@@ -155,6 +158,8 @@ class UserRequest extends FormRequest{
             "uids.required" => config("exceptions.USER_UID_REQURIED"),
             "uids.array" => config("exceptions.USER_UID_ARRAY"),
             "lang.in" => config("exceptions.LANG_IN"),
+            "name.required" => config("exceptions.DEV_NAME_REQUIRED"),
+            "name.regex" => config("exceptions.DEV_NAME_REGEX"),
         ];
     }
 

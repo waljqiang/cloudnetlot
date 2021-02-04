@@ -8,7 +8,7 @@ use Modules\Home\Services\SystemService;
 use Modules\Home\Http\Requests\SystemRequest;
 
 class SystemController extends Controller{
-	private $systemService;
+	protected $systemService;
 
 	public function __construct(SystemService $systemService){
 		$this->systemService = $systemService;

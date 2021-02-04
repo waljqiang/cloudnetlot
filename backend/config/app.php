@@ -189,6 +189,8 @@ return [
         App\Providers\PassportServiceProvider::class,
         App\Providers\MqttServiceProvider::class,
         App\Providers\YunlotServiceProvider::class,
+        //Excel
+        Maatwebsite\Excel\ExcelServiceProvider::class
     ],
 
     /*
@@ -238,9 +240,9 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Module' => Nwidart\Modules\Facades\Module::class,
-
         'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
         'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         // 添加以下两行
         /*
         'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,

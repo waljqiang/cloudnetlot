@@ -13,9 +13,9 @@ use Mail;
 
 class UserService extends BaseService{
 	const ENCRYPTKEY = 'cloudnetlot';
-	private $userRepository;
-	private $cacheRepository;
-	private $workgroupRepository;
+	protected $userRepository;
+	protected $cacheRepository;
+	protected $workgroupRepository;
 
 	public function __construct(UserRepository $userRepository,CacheRepository $cacheRepository,WorkgroupRepository $workgroupRepository){
 		$this->userRepository = $userRepository;
@@ -52,10 +52,25 @@ class UserService extends BaseService{
 		$workgroup["user_id"] = $user->id;
 		$workgroupID = $this->workgroupRepository->add($workgroup);
 		$user->workgroups()->attach($workgroupID,["created_at" => $time,"updated_at" => $time]);
-		if($user && $workgroupID){
+		//创建拓扑图网络根节点
+		$topRoot = config("topgraphy.network");
+		$rs = $user->topgraphy()->firstOrCreate([
+			"uid" => $user->id,
+			"mac" => $topRoot["mac"],
+			"pid" => $topRoot["pid"],
+			"content" => $topRoot["content"],
+			"is_edit" => $topRoot["is_edit"],
+			"is_virture" => $topRoot["is_virture"],
+			"point_x" => $topRoot["point_x"],
+			"point_y" => $topRoot["point_y"],
+			"group_id" => $workgroupID,
+			"created_at" => $time,
+			"updated_at" => $time
+		]);
+		if($user && $workgroupID && $rs){
 			DB::commit();
 		}else{
-			DB::rollback();
+			DB::rollBack();
 			throw new \Exception("Failure",config("exceptions.MYSQL_EXEC_ERROR"));
 		}
 		return ["uid" => $user->id];
@@ -277,8 +292,7 @@ class UserService extends BaseService{
         			"phone" => $value->phone,
         			"level" => $value->level,
         			"status" => $value->status,
-        			"created_at" => convDateToZoneGm($value->created_at->toDateTimeString(),$value->timeZone,$value->isSummerTime),
-        			"updated_at" => convDateToZoneGm($value->updated_at->toDateTimeString(),$value->timeZone,$value->isSummerTime)
+        			"created_at" => convDateToZoneGm($value->created_at->toDateTimeString(),$value->timeZone,$value->isSummerTime)
 				];
 			});
     	}
@@ -286,6 +300,32 @@ class UserService extends BaseService{
     		"total" => $total,
     		"list" => $list
     	];
+    }
+
+    // 获取子账号信息
+    public function getChildInfo($user,$params){
+    	if(!$user->is_primary){
+			throw new \Exception("No permission",config("exceptions.NO_PERMISSTION"));
+		}
+		$info = $this->userRepository->getInfos([
+			["pid",$user->id]
+		],["workgroups"],["*"],true);
+		if(empty($info)){
+			throw new \Exception("The account is not exists",config("exceptions.USER_NO_EXISTS"));
+		}
+		return [
+			"uid" => $info->id,
+			"username" => $info->username,
+			"nickname" => $info->nickname,
+			"pid" => $info->pid,
+			"phonecode" => $info->phonecode,
+			"phone" => $info->phone,
+			"email" => $info->email,
+			"level" => $info->level,
+			"status" => $info->status,
+			"gids" => $info->workgroups->pluck("id"),
+			"created_at" => convDateToZoneGm($info->created_at->toDateTimeString(),$info->timeZone,$info->isSummerTime)
+		];
     }
 
     //创建子账号
@@ -297,7 +337,7 @@ class UserService extends BaseService{
 		//检测工作组树
 		$allWorkgroup = $this->workgroupRepository->getInfos([["user_id",$user->id]]);
 		$allWorkgroupTree = rankSort($allWorkgroup->toArray(),"id","pid","child","id");
-		$this->checkTree($allWorkgroupTree,$gids);
+		$this->checkTree($allWorkgroupTree);
 		$time = Carbon::now()->timestamp;
 		$data = [
 			"username" => array_get($params,"username"),
@@ -307,7 +347,7 @@ class UserService extends BaseService{
 			"email" => array_get($params,"email"),
 			"phonecode" => array_get($params,"phonecode"),
 			"phone" => array_get($params,"phone"),
-			"level" => array_get($params,"role") == 1 ? config("public.user.level.child_admin") : config("public.user.level.child_guest"), 
+			"level" => array_get($params,"role") == 2 ? config("public.user.level.child_admin") : config("public.user.level.child_guest"), 
 			"area" => !empty(array_get($params,"area")) ? array_get($params,"area") : "0",
 			"address" => array_get($params,"address",""),
 			"status" => array_get($params,"enable") == 1 ? config("public.user.status.enabled") : config("public.user.status.disabled"),
@@ -325,27 +365,14 @@ class UserService extends BaseService{
 			DB::commit();
 			return ["uid" => $user->id];
 		}catch(\Exception $e){
-			DB::rollback();
+			DB::rollBack();
 			throw new \Exception($e->getMessage(),config("exceptions.MYSQL_EXEC_ERROR"));
 		}
     }
 
-    private function checkTree($trees,$datas){
-    	$res = false;
-    	sort($datas);
-    	$node = array_shift($datas);
-    	foreach($trees as $tree){
-    		if($node == $tree["id"]){
-    			$res = true;
-    			$trees = $tree["child"];
-    			break;
-    		}
-    	}
-    	if(!$res){
+    private function checkTree($trees){
+    	if(count($trees) != 1){
     		throw new \Exception("Group node if not a tree",config("exceptions.WORKGROUP_NODE_NO_TREE"));
-    	}
-    	if(!empty($datas)){
-    		$this->checkTree($trees,$datas);
     	}
     }
 
@@ -370,7 +397,7 @@ class UserService extends BaseService{
 			if(in_array($key,["nickname","email","phonecode","phone"])){
 				$child->$key = $param;
 			}elseif($key == "role"){
-				$child->level = $param == 1 ? config("public.user.level.child_admin") : config("public.user.level.child_guest");
+				$child->level = $param == 2 ? config("public.user.level.child_admin") : config("public.user.level.child_guest");
 			}elseif($key == "enable"){
 				$child->status = $param == 1 ? config("public.user.status.enabled") : config("public.user.status.disabled");
 			}else{
@@ -387,14 +414,17 @@ class UserService extends BaseService{
 				//检测工作组树
 				$allWorkgroup = $this->workgroupRepository->getInfos([["user_id",$user->id]]);
 				$allWorkgroupTree = rankSort($allWorkgroup->toArray(),"id","pid","child","id");
-				$this->checkTree($allWorkgroupTree,$gids);
-				$attaches = array_combine($gids,array_fill(0,count($gids),["updated_at" => $time]));
+				$this->checkTree($allWorkgroupTree);
+				$attaches = array_combine($gids,array_fill(0,count($gids),["created_at" => $time,"updated_at" => $time]));
 				$child->workgroups()->sync($attaches);
 			}
 			DB::commit();
+			//清除相关工作组下拓扑图缓存信息
+			$gidsForTopgraphy = array_flip(array_flip(array_merge($gids,$user->gids)));
+			$this->cacheRepository->deleteTopgraphy($user->primary_id,$gidsForTopgraphy);
 			return [];
 		}catch(\Exception $e){
-			DB::rollback();
+			DB::rollBack();
 			throw new \Exception($e->getMessage(),$e->getCode());
 		}	
     }
@@ -449,8 +479,8 @@ class UserService extends BaseService{
 			DB::commit();
 			return [];
 		}catch(\Exception $e){
-			DB::rollback();
-			throw new \Exception("Failure",config("exceptions.600102100"));
+			DB::rollBack();
+			throw new \Exception("Failure",config("exceptions.MYSQL_EXEC_ERROR"));
 		}
     }
 

@@ -10,10 +10,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class SystemService extends BaseService{
-	private $productRepository;
-	private $clientRepository;
-	private $aclRepository;
-	private $deviceRepository;
+	protected $productRepository;
+	protected $clientRepository;
+	protected $aclRepository;
+	protected $deviceRepository;
 
 	public function __construct(ProductRepository $productRepository,ClientRepository $clientRepository,AclRepository $aclRepository,DeviceRepository $deviceRepository){
 		$this->productRepository = $productRepository;
@@ -46,7 +46,7 @@ class SystemService extends BaseService{
 		if($product->clients->isEmpty()){//没有客户端
 			$cltid = generateClitid($product->uid,$product->id,$mac);
 			DB::beginTransaction();
-			$clientID = $this->clientRepository->add([
+			$rs1 = $this->clientRepository->add([
 				"cltid" => $cltid,
 				"uid" => $product->user->id,
 				"prtid" => $product->prtid,
@@ -55,7 +55,7 @@ class SystemService extends BaseService{
 				"updated_at" => $time
 			]);
 
-			$rs = $this->aclRepository->addAll([
+			$rs2 = $this->aclRepository->addAll([
                 [//允许用户发布设备上行主题
                     "allow" => 1,
                     "ipaddr" => NULL,
@@ -77,25 +77,27 @@ class SystemService extends BaseService{
                     "updated_at" => $time
                 ]
             ]);
-            $deviceID = $this->deviceRepository->add([
-            	"dev_mac" => $mac,
-            	"prtid" => $product->prtid,
-            	"prt_type" => $product->type,
-            	"prt_size" => $product->size,
-            	"cltid" => $cltid,
-            	"type" => $type,
-            	"created_at" => $time,
-            	"updated_at" => $time
-            ]);
-            if($clientID && $rs && $deviceID){
-            	DB::commit();
-            }else{
-            	DB::rollback();
-            	throw new \Exception("Failure",config("exceptions.MYSQL_EXEC_ERROR"));
-            }
 		}else{
+			$rs1 = $rs2 = true;
 			$cltid = $product->clients->get(0)->cltid;
 		}
+		$rs3 = $this->deviceRepository->updateOrCreate([
+			"dev_mac" => $mac
+		],[
+			"prtid" => $product->prtid,
+        	"prt_type" => $product->type,
+        	"prt_size" => $product->size,
+        	"cltid" => $cltid,
+        	"type" => $type,
+        	"created_at" => $time,
+        	"updated_at" => $time
+		]);
+		if($rs1 && $rs2 && $rs3){
+        	DB::commit();
+        }else{
+        	DB::rollBack();
+        	throw new \Exception("Failure",config("exceptions.MYSQL_EXEC_ERROR"));
+        }
 		$encode = ["type" => config("yunlot.encodetype")];
 		if($encode["type"] == 2){
 			$encode = array_merge($encode,[

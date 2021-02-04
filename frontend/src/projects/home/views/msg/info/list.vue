@@ -28,6 +28,7 @@
         <el-dialog
             title=""
             :visible.sync="dialogVisible"
+            :close-on-click-modal="false"
             width="600"
             :show-close="false"
             :before-close="handleClose">
@@ -286,8 +287,8 @@ export default {
                 }
                 this.$store.commit('showloadding',{show:false}); 
             }).catch((error) => {
-               this.$store.commit('showloadding',{show:false}); 
-               let err = {};
+                this.$store.commit('showloadding',{show:false}); 
+                let err = {};
                 let errCode = error.errorCode[0];
                 switch (errCode) {
                     case 600400100:

@@ -9,7 +9,7 @@ use Modules\Home\Services\UserService;
 use Modules\Home\Services\OplogService;
 
 class UserController extends Controller{
-	private $userService;
+	protected $userService;
 
 	public function __construct(UserService $userService){
 		$this->userService = $userService;
@@ -74,6 +74,11 @@ class UserController extends Controller{
 	//获取子账号列表
 	public function getChild(UserRequest $request){
 		return $this->userService->getChild($request->user(),$request->all());
+	}
+
+	//获取子账号信息
+	public function getChildInfo(UserRequest $request){
+		return $this->userService->getChildInfo($request->user(),$request->all());
 	}
 
 	//创建子账号

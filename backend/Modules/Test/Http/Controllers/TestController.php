@@ -120,4 +120,8 @@ class TestController extends Controller{
     public function testHash(Request $request){
         return $this->testService->testHash($request->all());
     }
+
+    public function devicesOnline(Request $request){
+        return $this->testService->devicesOnline($request->all());
+    }
 }

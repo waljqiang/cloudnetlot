@@ -2,7 +2,7 @@
 
 return [
     "default" => [
-        "admin" => env("APP_DEFAULT_ADMIN","cloudnetlot"),
+        "admin" => env("APP_DEFAULT_ADMIN","admin"),
         "password" => env("APP_DEFAULT_PASSWORD","123456"),
         "timeZone" => env("APP_DEFAULT_TIMEZONE","+08:00"),
         "isSummerTime" => env("APP_DEFAULT_ISSUMMERTIME","0"),
@@ -117,6 +117,42 @@ return [
             ]
         ]
     ],
+    "export" => [
+        "list" => [
+            "columns" => [
+                "name" => ["设备MAC","设备IP","设备名称","设备型号","工作模式","软件版本","接入时间","设备状态"],
+                "width" => ["A" => 18,"B" => 16,"C" => 20,"D" => 16,"E" => 16,"F" => 40,"G" => 18,"H" => 10]
+            ],
+            "trans" => [
+                "mode" => [
+                    "zh-cn" => [
+                        "1" => "网关模式",
+                        "2" => "中继模式",
+                        "3" => "WISP模式",
+                        "4" => "WDS模式",
+                        "5" => "AP模式"
+                    ],
+                    "en-us" => [
+                        "1" => "Gateway",
+                        "2" => "Repeat",
+                        "3" => "WISP",
+                        "4" => "WDS",
+                        "5" => "AP"
+                    ]
+                ],
+                "status" => [
+                    "zh-cn" => [
+                        "0" => "离线",
+                        "1" => "在线"
+                    ],
+                    "en-us" => [
+                        "0" => "offline",
+                        "1" => "online"
+                    ]
+                ]
+            ]
+        ]
+    ],
     "workgroup" => [
         "default" => [
             "pid" => 0,
@@ -126,4 +162,6 @@ return [
         ],
         "level" => 5,
     ],
+    "packagepath" => "upgradepackages",
+    "upgradedelay" => 60,
 ];

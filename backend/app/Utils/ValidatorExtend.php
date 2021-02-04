@@ -50,5 +50,21 @@ class ValidatorExtend{
                 return false;
             }
         });
+        //小于等于某字段值
+        Validator::extend("lte",function($attribute,$value,$parameters,$validator){
+            if (count($parameters) < 1) {
+                throw new InvalidArgumentException("Validation rule lte requires at least 1 parameters.");
+            }
+            $compareValue = array_get($validator->getData(),$parameters["0"]);
+            return $value <= $compareValue;
+        });
+        //大于等于
+        Validator::extend("lge",function($attribute,$value,$parameters,$validator){
+            if (count($parameters) < 1) {
+                throw new InvalidArgumentException("Validation rule lge requires at least 1 parameters.");
+            }
+            $compareValue = array_get($validator->getData(),$parameters["0"]);
+            return $value >= $compareValue;
+        });
     }
 }

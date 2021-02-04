@@ -5,7 +5,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class OplogRequest extends FormRequest{
     private $rules = [
-        "statics" => [
+        "statistics" => [
             "status" => "in:0,1,2,3,4"
         ],
         "list" => [
@@ -33,7 +33,7 @@ class OplogRequest extends FormRequest{
         $rules = [];
         if(!empty($this->rules)){
             foreach ($this->rules as $action => $rule) {
-                $regex = "*" . $action;
+                $regex = "*/" . $action;
                 if($this->is($regex)){
                     $rules = $rule;
                     break;

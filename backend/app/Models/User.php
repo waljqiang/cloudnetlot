@@ -7,10 +7,12 @@ use App\User as UserBase;
 use Laravel\Passport\HasApiTokens;
 use Modules\Home\Entities\Workgroup;
 use Modules\Home\Entities\Command;
+use Modules\Home\Entities\Topgraphy;
 use Modules\Develop\Entities\Develop;
 use App\Models\Admin;
 use Modules\Develop\Entities\Product;
 use Modules\Develop\Entities\Acl;
+use Modules\Home\Entities\UpgradeOrder;
 
 class User extends UserBase implements JWTSubject{
     use HasApiTokens;
@@ -86,6 +88,14 @@ class User extends UserBase implements JWTSubject{
         return $this->hasMany(User::class,"pid","id");
     }
 
+    public function topgraphy(){
+        return $this->hasOne(Topgraphy::class,"uid","id");
+    }
+
+    public function orders(){
+        return $this->hasMany(UpgradeOrder::class,"user_id","id");
+    }
+
     public function getNicknameAttribute($value){
         return !empty($value) ? $value : '';
     }
@@ -120,6 +130,22 @@ class User extends UserBase implements JWTSubject{
 
     public function getGidsAttribute($value){
         return $this->workgroups->pluck("id")->toArray();
+    }
+
+    public function getConfigIdsAttribute($value){
+        return $this->workgroups->pluck("config_id")->toArray();
+    }
+
+    public function getLevelAttribute($value){
+        return (string)$value;
+    }
+
+    public function getStatusAttribute($value){
+        return (string)$value;
+    }
+
+    public function getChildIdsAttribute(){
+        return $this->childs->pluck("id")->toArray();
     }
 
 }

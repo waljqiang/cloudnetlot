@@ -9,8 +9,8 @@ use Modules\Home\Http\Requests\OplogRequest;
 
 class OplogController extends Controller{
 	//通知统计
-	public function staticsNotices(OplogRequest $request,OplogService $oplogService){
-		return $oplogService->staticsNotices($request->user(),$request->all());
+	public function statisticsNotices(OplogRequest $request,OplogService $oplogService){
+		return $oplogService->statisticsNotices($request->user(),$request->all());
 	}
 
 	//获取操作日志列表

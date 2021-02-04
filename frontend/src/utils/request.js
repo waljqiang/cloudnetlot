@@ -228,7 +228,6 @@ service.interceptors.response.use(
 			default:
 				err.message = this.$t('msg.request_err_tips18');
 		}
-		alert(123);
 		Message({
 			message: err.message,
 			type: 'error',

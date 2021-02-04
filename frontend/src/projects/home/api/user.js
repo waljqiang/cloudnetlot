@@ -72,4 +72,48 @@ export function userCount(params) {
   })
 }
 
+export function userAdd(params) {
+  return request({
+    url: 'backend/user/child/add',
+    method: 'post',
+    data:params
+  })
+}
+
+export function userEdit(params) {
+  return request({
+    url: 'backend/user/child/save',
+    method: 'post',
+    data:params
+  })
+}
+
+export function childInfo(params) {
+  return request({
+    url: 'backend/user/child/info',
+    method: 'get',
+    params
+  })
+}
+
+export function resetChildPwd(params) {
+  return request({
+    url: 'backend/user/child/resetspassword',
+    method: 'post',
+    data:params
+  })
+}
+
+export function delChild(params) {
+  return request({
+    url: 'backend/user/child/deletes',
+    method: 'post',
+    data:params
+  })
+}
+
+
+
+
+
 

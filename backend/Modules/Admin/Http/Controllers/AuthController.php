@@ -23,7 +23,7 @@ class AuthController extends Controller{
      */
     public function getToken(AccessTokenRequest $request){
         $credentials = request(["username","password"]);
-        $credentials["is_del"] = 0;
+        $credentials["status"] = 1;
         $token = auth("cloudnetlotadmin")->attempt($credentials);
         return $this->responseWithToken($token,$this->getRefreshToken($token));
     }

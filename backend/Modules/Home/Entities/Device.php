@@ -30,6 +30,14 @@ class Device extends Model{
 		return $this->hasMany(Command::class,"dev_mac","dev_mac");
 	}
 
+    public function workgroup(){
+        return $this->belongsTo(Workgroup::class,"group_id","id");
+    }
+
+    public function topgraphy(){
+        return $this->hasOne(Topgraphy::class,"mac","dev_mac");
+    }
+
     public function clientsStaticsHours(){
         return $this->hasMany(DeviceClientsStaticsHour::class,"mac","dev_mac");
     }
@@ -56,7 +64,7 @@ class Device extends Model{
         return $this->parameters->get(config("device.typeinfo.user"));
     }
 
-    public function getTimereBootAttribute(){
+    public function getTimeRebootAttribute(){
         return $this->parameters->get(config("device.typeinfo.time_reboot"));
     }
 
